@@ -179,6 +179,10 @@ if arg.txt or arg.infile:
 
         sdh = []
         for text in eu:
+            if text in sdh:
+                print ('# skipped: duplicate string')
+                continue
+
             sdh.append(text)
 
             text_old = text
@@ -211,6 +215,7 @@ if arg.txt or arg.infile:
                     temp = sub_obfus(0)
                 else:
                     temp = convert(int(text))
+                temp = 'int ' + temp
 
             else:
                 B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( [ chr ( _ ) for _ in [ %s ] ] )'.format(sub_obfus(0))
@@ -232,8 +237,6 @@ if arg.txt or arg.infile:
                         obfuscate_string = convert(int(text))
                     else:
                         obfuscate_string = ch(text)
-                        if '\n' in text_old:
-                              obfuscate_string = 'chr {}'.format(obfuscate_string)
                     temp = F.replace('%s', obfuscate_string)
 
                 else:
@@ -244,10 +247,15 @@ if arg.txt or arg.infile:
                 if '.' in text_old and unix == 1:
                     temp = 'float ( str ( ' + temp + ' ) )'
 
-                if text_old[0] == 'u':
-                    temp = 'u"{}".format ( ' + temp + ' )'
-                if text_old[0] == 'r':
-                    temp = 'r"{}".format ( ' + temp + ' )'
+                ur = text_old[0]
+                if ur in ('u', 'r'):
+                    if ur == 'u':
+                        temp = 'u"{}".format ( ' + temp + ' )'
+                    if ur == 'r':
+                        temp = 'r"{}".format ( ' + temp + ' )'
+                else:
+                    if re.search('\\\\n', repr(text_old)):
+                        temp = "'\\n' . join ( ( {} ) . split('\\\\n') )".format(temp)
 
                 if arg.verbose or arg.debug:
                     sep('temp')
