@@ -11,7 +11,6 @@ except ImportError:
     from distutils.core import setup
 
 version = re.findall(r'no strint> (.*?) \(', open('no_strint.py').read())[0]
-print version
 
 setup(
     name='strint',
