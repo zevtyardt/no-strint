@@ -6,6 +6,11 @@ bug silahkan submit issue kalian ke sini
 
 * satu issue dari anda sangat berarti bagi saya.
 
+>> installation
+   $ git clone https://github.com/zevtyardt/no-strint
+   $ cd no-strint
+   $ python2 setup.py install
+   $ strint -h
 
 #update -> 1.3.8
 * fixed regex pattern
