@@ -9,3 +9,5 @@ if c[0] == random.choice(['a', 'b']):
     print ('tes', 'again')
 else:
     print (a, b, c, d)
+
+print '\nthis\nnewline\n'
