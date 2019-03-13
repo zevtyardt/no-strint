@@ -144,7 +144,7 @@ class obfuscator(object):
         return result
 
 
-class main(object):
+class strint(object):
     def __init__(self):
         self.parser = parser_args()
         self.arg = self.parser.parse_args()
@@ -275,6 +275,9 @@ class main(object):
 
     def clear_base(self, base_):
         return re.sub('(?si)["\']{3}.*?["\']{3}', '', base_)
+
+def main():
+    strint()
 
 if __name__ == '__main__':
     main()
