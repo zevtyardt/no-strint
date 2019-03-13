@@ -7,7 +7,7 @@ import argparse
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.3.8 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.4.1 (https://github.com/zevtyardt)'
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
