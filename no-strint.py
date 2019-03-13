@@ -25,7 +25,8 @@ def fix_text(text):
         text = text[1:]
     if text[-1] in ('"', "'"):
         text = text[:-1]
-    return text
+
+    return text.replace("\\'", "'").replace('\\"', '"')
 
 def sort(a):
     res = []
