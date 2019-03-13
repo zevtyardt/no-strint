@@ -48,7 +48,8 @@ def find_str(li):
         st = re.findall(r'((?<![\\])[\'"])((?:.(?!(?<![\\])\1))*.?)\1', i)
         if st:
             for i in st:
-                res.append(i[0] + i[1] + i[0])
+                if '.join' not in i[1]:
+                    res.append(i[0] + i[1] + i[0])
 
     for l in res:
         for d in li:
@@ -132,7 +133,7 @@ def convert(num, depth=0):
 
     return result
 
-parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n       {0} --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0])),
+parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n       {0} --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0].split('/')[-1])),
               description=banner, formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
 parser.add_argument('--infile', metavar='file', help='specify the file name to process')
@@ -198,7 +199,7 @@ if arg.txt or arg.infile:
             if arg.debug or arg._eval or arg.verbose:
                 sep('original strint')
                 if not arg.encode:
-                    print (text if text != '' else repr(text))
+                    print (text_old)
                 else:
                     print ('{} -> {}'.format(text, encode(text)))
 
@@ -227,7 +228,14 @@ if arg.txt or arg.infile:
                     F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ {6} ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), sub_obfus(1), convert(95), sub_obfus(2), B, sub_obfus(0))
 
                 if text != '':
-                    temp = F.replace('%s', ( (ch(text)) if not arg.encode else convert(int(text)) ))
+                    if arg.encode:
+                        obfuscate_string = convert(int(text))
+                    else:
+                        obfuscate_string = ch(text)
+                        if '\n' in text_old:
+                              obfuscate_string = 'chr {}'.format(obfuscate_string)
+                    temp = F.replace('%s', obfuscate_string)
+
                 else:
                     if arg.stdout:
                         temp = F.replace('%s', temp)
