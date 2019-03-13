@@ -8,7 +8,7 @@ sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
 
-banner = '<no strint> 1.2.7 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.3.8 (https://github.com/zevtyardt)'
 
 def sep(x):
     print ('----- {0:-<35}'.format((x + ' ').upper()))
@@ -45,55 +45,10 @@ def find_str(li):
 
     res, final = [], []
     for i in li:
-        x = re.search('\\\\(?:\'|")', i)
-        if not x:
-            x = re.search("(?:'.*?\"|\".*?')", i)
-
-        if x:
-            x = ''.join(re.findall(r'(["\'].*?(?=["\']))', i))
-            if x != '':
-                if x[0] != x[-1]:
-                    x = x + x[0]
-                rf = x
-
-            ag = re.findall('([ .]*format.*?)["\']', rf)
-            if ag:
-                for at in rf.split(ag[0]):
-                    if at[0] in ('"', "'"):
-                        if at[-1] in ('"', "'"):
-                            at = at[:-1]
-                        at = at + at[0]
-
-                    h = re.findall('({}.*?["\'])'.format(at[0]), at)
-                    if h:
-                        if h[0][0] != h[0][-1]:
-                            h = [''.join(h)]
-
-                    if len(h) >= 2:
-                        for m in h:
-                            if m[0] != m[-1]:
-                                if m[-1] in ('"', "'"):
-                                    m = m[:-1]
-                                m = m + m[0]
-                            res.append(m)
-                    else:
-                        res.append(at)
-            else:
-                if rf[:2] == "''":
-                    rf = ''.join(re.findall('(["\'].*?(?=["\']))', rf[2:]))
-
-                if rf[0] != rf[-1]:
-                    if rf[-1] in ('"', "'"):
-                        rf = rf[:-1]
-                    rf = rf + rf[0]
-
-                res.append(rf)
-
-        else:
-            x = re.findall('(["\'].*?["\'])', i)
-            if x:
-                for r in x:
-                    res.append(r)
+        st = re.findall(r'((?<![\\])[\'"])((?:.(?!(?<![\\])\1))*.?)\1', i)
+        if st:
+            for i in st:
+                res.append(i[0] + i[1] + i[0])
 
     for l in res:
         for d in li:
@@ -177,7 +132,7 @@ def convert(num, depth=0):
 
     return result
 
-parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] [(str|int) [...]]\n       {0} --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0])),
+parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n       {0} --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0])),
               description=banner, formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
 parser.add_argument('--infile', metavar='file', help='specify the file name to process')
