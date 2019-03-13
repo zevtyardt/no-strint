@@ -16,7 +16,8 @@ bug silahkan submit issue kalian ke sini
 
 #first release
 * masih versi beta
-* [--only-strint] jika hanya program sederhana output masih bisa diexecute sebaliknya  kalau didalam file terdapat \" atau \" mungkin bakal ada syntax error dll.
+* [--only-strint] jika hanya program sederhana output masih bisa diexecute
+  sebaliknya  kalau didalam file terdapat \" atau \" mungkin bakal ada syntax error dll.
 
 Tips:
 - copy string yang terdapat \" atau \" didalamnya
