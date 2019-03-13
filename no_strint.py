@@ -248,7 +248,7 @@ class strint(object):
             print (final)
             if not self.only_strint:
                 if self.arg.debug or self.arg._eval:
-                    self.utilssep('eval')
+                    self.utils.sep('eval')
                     print (eval(final))
             if self.arg.outfile:
                 self.utils.sep('save')
