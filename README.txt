@@ -7,7 +7,7 @@
 >> installation
    $ git clone https://github.com/zevtyardt/no-strint
    $ cd no-strint
-   $ python2 setup.py install
+   $ python2 setup.py install or pip install .
    $ strint -h
 
 # update -> 1.4.1
