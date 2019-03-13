@@ -49,7 +49,7 @@ def find_str(li):
         if st:
             for i in st:
                 if '.join' not in i[1]:
-                    res.append(i[0] + i[1] + i[0])
+                    res.append(str(i[0] + i[1] + i[0]))
 
     for l in res:
         for d in li:
@@ -95,6 +95,9 @@ def sub_obfus(num):
             print ('  -> {0}'.format(i))
 
     return ' + '.join(res)
+
+# <-- https://benkurtovic.com/2014/06/01/obfuscating-hello-world.html -->
+# <-- special thanks to Ben Kurtovic -->
 
 def obfuscate(num, depth):
     if num <= 8:
@@ -176,7 +179,6 @@ if arg.txt or arg.infile:
 
         eu = sort([base][0])
 
-
         sdh = []
         for text in eu:
             if text in sdh:
@@ -189,9 +191,9 @@ if arg.txt or arg.infile:
             text = fix_text(text_old)
 
             if text == '':
-                temp = '( ( lambda : {0} ) . func_code . co_lnotab )'
+                temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                 if arg._exec:
-                    print ('# can\'t execute NoneType')
+                    print ('# can\'t execute NoneType string')
                     arg._exec = False
 
             if bs_en:
