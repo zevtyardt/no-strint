@@ -1,6 +1,4 @@
-ini adalah project iseng saya. masih versi beta jadi
-jika masih ada output yg tidak sesuai atau terdapat
-bug silahkan submit issue kalian ke sini
+! nemu bugs atau output yang tidak sesuai? silahkan buat issue kalian kesini
 
 > https://github.com/zevtyardt/no-strint/issues <
 
@@ -12,14 +10,16 @@ bug silahkan submit issue kalian ke sini
    $ python2 setup.py install
    $ strint -h
 
-#update -> 1.3.8
-* fixed regex pattern
-   sekarang sudah bisa gunain option
-   [--only-strint] tanpa ada error, walaupun
-   masih ada beberapa string yang gak ikut
-   keambil
+# update -> 1.4.1
+* OOP (Object Oriented Programming)
+* fix some bugs
 
-#first release
+# update -> 1.3.8
+* fixed regex pattern
+  sekarang sudah bisa gunain option [--only-strint] tanpa ada error, walaupun
+  masih ada beberapa string yang gak ikut keambil.
+
+# first release
 * masih versi beta
 * [--only-strint] jika hanya program sederhana output masih bisa diexecute
   sebaliknya  kalau didalam file terdapat \" atau \" mungkin bakal ada syntax error dll.
