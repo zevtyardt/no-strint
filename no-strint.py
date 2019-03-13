@@ -18,6 +18,15 @@ def encode(string):
             s))(lambda f, s: sum(f[i] * 256 ** i for i in \
             range(len(f))), str(string))
 
+def fix_text(text):
+    if text[0] in ('r', "u"):
+        text = text[1:]
+    if text[0] in ('"', "'"):
+        text = text[1:]
+    if text[-1] in ('"', "'"):
+        text = text[:-1]
+    return text
+
 def sort(a):
     res = []
     while a:
@@ -215,13 +224,7 @@ if arg.txt or arg.infile:
             sdh.append(text)
 
             text_old = text
-
-            if text[0] in ('r', "u"):
-                text = text[1:]
-            if text[0] in ('"', "'"):
-                text = text[1:]
-            if text[-1] in ('"', "'"):
-                text = text[:-1]
+            text = fix_text(text_old)
 
             if text == '':
                 temp = '( ( lambda : {0} ) . func_code . co_lnotab )'
