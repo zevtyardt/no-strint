@@ -15,16 +15,17 @@ def sep(x):
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
-            s))(lambda f, s: sum(f[i] * 256 ** i for i in \
+             s))(lambda f, s: sum(f[i] * 256 ** i for i in \
             range(len(f))), str(string))
 
 def fix_text(text):
-    if text[0] in ('r', "u"):
-        text = text[1:]
-    if text[0] in ('"', "'"):
-        text = text[1:]
-    if text[-1] in ('"', "'"):
-        text = text[:-1]
+    if only_strint:
+        if text[0] in ('r', "u"):
+            text = text[1:]
+        if text[0] in ('"', "'"):
+            text = text[1:]
+        if text[-1] in ('"', "'"):
+            text = text[:-1]
 
     return text.replace("\\'", "'").replace('\\"', '"')
 
