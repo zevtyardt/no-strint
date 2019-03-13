@@ -1,4 +1,4 @@
-! nemu bugs atau output yang tidak sesuai? silahkan buat issue kalian kesini
+! nemu bug atau output yang tidak sesuai? silahkan buat issue kalian kesini
 
 > https://github.com/zevtyardt/no-strint/issues <
 
