@@ -54,6 +54,8 @@ class utils:
         for l in res:
             for d in li:
                 if l in d:
+                    if re.search(r're\.(.*?)\(', d):
+                        l = l.replace('\\', '\\\\')
                     if "r{}".format(l) in d:
                         l = 'r{}'.format(l)
                     elif "u{}".format(l) in d:
