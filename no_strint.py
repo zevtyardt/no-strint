@@ -7,7 +7,7 @@ import argparse
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.4.2 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.4.3 (https://github.com/zevtyardt)'
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -15,11 +15,12 @@ def encode(string):
             range(len(f))), str(string))
 
 def parser_args():
-    parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n       {0} --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0].split('/')[-1])),
+    parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] [--no-space] (str|int) [...]\n      {0}  --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0].split('/')[-1])),
               description=banner, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
     parser.add_argument('--infile', metavar='file', help='specify the file name to process')
     parser.add_argument('--outfile', metavar='file', help='save the results as a file')
+    parser.add_argument('--no-space', action='store_true', help='generate output strings without spaces')
     parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers')
     parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
@@ -84,6 +85,15 @@ class utils:
                 text = text[:-1]
         # <-- clear escape character -->
         return text.replace("\\'", "\'").replace('\\"', '\"').replace('\\x1b', '\x1b').replace('\\033', '\033').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r').replace('\\u001b', '\u001b')
+
+    def delete_space(self, temp):
+        temp = temp.replace(' ', '')
+        for rpt in ['for', 'in', 'if', 'else']:
+            temp = temp.replace(rpt, ' {} '.format(rpt))
+        temp = temp.replace('jo in ', 'join')
+        temp = temp.replace('lambda_', 'lambda _')
+        temp = temp.replace(' in t', 'int')
+        return temp
 
 class obfuscator(object):
     def __init__(self, arg, utils):
@@ -180,7 +190,6 @@ class strint(object):
                     sdh.append(text)
                     text_old = text
                     text = self.utils.fix_text(text_old)
-
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
@@ -227,14 +236,21 @@ class strint(object):
                         else:
                             if self.arg.stdout:
                                 temp = F.replace('%s', temp)
+                    if self.arg.no_space:
+                        temp = self.utils.delete_space(temp)
                     if self.only_strint:
+                        reb = None
                         if '.' in text_old and unix == 1:
-                            temp = 'float ( str ( ' + temp + ' ) )'
+                            reb = 'float ( str ( %s ) )'
                         ur = text_old[0]
                         if ur == 'u':
-                            temp = 'u"{}".format ( ' + temp + ' )'
+                            reb = 'u"{}".format ( %s )'
                         if ur == 'r':
-                            temp = 'r"{}".format ( ' + temp + ' )'
+                            reb = 'r"{}".format ( %s )'
+                        if reb:
+                            if self.arg.no_space:
+                                reb = reb.replace(' ', '')
+                            temp = reb % temp
                         if self.arg.verbose or self.arg.debug:
                             self.utils.sep('temp')
                             print (temp)
