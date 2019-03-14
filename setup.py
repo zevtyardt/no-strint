@@ -10,7 +10,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = re.findall(r'no strint> (.*?) \(', open('no_strint.py').read())[0]
+version = re.findall(r'__version__ = \'(.*?)\'', open('no_strint.py').read())[0]
 
 setup(
     name='strint',
