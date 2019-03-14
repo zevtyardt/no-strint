@@ -20,8 +20,8 @@ def parser_args():
     parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
     parser.add_argument('--infile', metavar='file', help='specify the file name to process')
     parser.add_argument('--outfile', metavar='file', help='save the results as a file')
-    parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers (experimental)')
-    parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate (experimental)')
+    parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers')
+    parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
     parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
     parser.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')
@@ -152,11 +152,11 @@ class strint(object):
         self.obfuscator = obfuscator(self.arg, self.utils)
         self.set_options()
         try:
-            self.begin()
+            self.rebuild()
         except Exception as e:
             print ('Traceback: %s' % e)
 
-    def begin(self):
+    def rebuild(self):
         if self.arg.txt or self.arg.infile:
             self.base = self.grep_content()
             self.ori = self.clear_base(self.base[0])
