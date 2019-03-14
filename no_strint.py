@@ -15,7 +15,7 @@ def encode(string):
             range(len(f))), str(string))
 
 def parser_args():
-    parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] [--no-space] (str|int) [...]\n      {0}  --infile <file> [--only-strint] [--outfile <file>]\n      {0}  --eval or [(--debug|--verbose)]'.format(" " * len(sys.argv[0].split('/')[-1])),
+    parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  --infile <file> [--only-strint] [--outfile <file>]\n      {0}  [--no-space] [--eval or [(--debug|--verbose)]]'.format(" " * len(sys.argv[0].split('/')[-1])),
               description=banner, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
     parser.add_argument('--infile', metavar='file', help='specify the file name to process')
