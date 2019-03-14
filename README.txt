@@ -10,6 +10,10 @@
    $ python2 setup.py install or pip install .
    $ strint -h
 
+# update -> 1.4.3
+* Add new options: [--no-space] generate output strings
+                   without spaces
+
 # update -> 1.4.2
 * fix a bug where the character escape cannot work
 
