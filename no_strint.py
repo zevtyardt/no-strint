@@ -291,7 +291,9 @@ class strint(object):
         return base_
 
     def clear_base(self, base_):
-        return re.sub('(?si)["\']{3}.*?["\']{3}', '', base_)
+        for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
+            base_ = base_.replace(i, repr(i)[3:-3])
+        return base_
 
 def main():
     strint()
