@@ -167,7 +167,7 @@ class strint(object):
         self.set_options()
         try:
             self.rebuild()
-        except Exception as e:
+        except IOError as e:
             print ('Traceback: %s' % e)
 
     def rebuild(self):
