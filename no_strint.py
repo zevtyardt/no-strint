@@ -84,7 +84,7 @@ class utils:
             if text[-1] in ('"', "'"):
                 text = text[:-1]
         # <-- clear escape character -->
-        return text.replace("\\'", "\'").replace('\\"', '\"').replace('\\x1b', '\x1b').replace('\\033', '\033').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r').replace('\\u001b', '\u001b')
+        return text.decode('string_escape')
 
     def delete_space(self, temp):
         temp = temp.replace(' ', '')
@@ -164,10 +164,10 @@ class strint(object):
         self.utils = utils(self.arg)
         self.obfuscator = obfuscator(self.arg, self.utils)
         self.set_options()
-        try:
-            self.rebuild()
-        except Exception as e:
-            print ('Traceback: %s' % e)
+    #    try:
+        self.rebuild()
+     #   except Exception as e:
+      #      print ('Traceback: %s' % e)
 
     def rebuild(self):
         if self.arg.txt or self.arg.infile:
