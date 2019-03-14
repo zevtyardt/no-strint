@@ -7,7 +7,7 @@ import argparse
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.4.1 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.4.2 (https://github.com/zevtyardt)'
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -80,7 +80,8 @@ class utils:
                 text = text[1:]
             if text[-1] in ('"', "'"):
                 text = text[:-1]
-        return text.replace("\\'", "'").replace('\\"', '"')
+        # <-- clear escape character -->
+        return text.replace("\\'", "\'").replace('\\"', '\"').replace('\\x1b', '\x1b').replace('\\033', '\033').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
 
 class obfuscator(object):
     def __init__(self, arg, utils):
@@ -177,6 +178,7 @@ class strint(object):
                     sdh.append(text)
                     text_old = text
                     text = self.utils.fix_text(text_old)
+
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
@@ -227,14 +229,10 @@ class strint(object):
                         if '.' in text_old and unix == 1:
                             temp = 'float ( str ( ' + temp + ' ) )'
                         ur = text_old[0]
-                        if ur in ('u', 'r'):
-                            if ur == 'u':
-                                temp = 'u"{}".format ( ' + temp + ' )'
-                            if ur == 'r':
-                                temp = 'r"{}".format ( ' + temp + ' )'
-                        else:
-                            if re.search('\\\\n', repr(text_old)):
-                                temp = "'\\n' . join ( ( {} ) . split('\\\\n') )".format(temp)
+                        if ur == 'u':
+                            temp = 'u"{}".format ( ' + temp + ' )'
+                        if ur == 'r':
+                            temp = 'r"{}".format ( ' + temp + ' )'
                         if self.arg.verbose or self.arg.debug:
                             self.utils.sep('temp')
                             print (temp)
