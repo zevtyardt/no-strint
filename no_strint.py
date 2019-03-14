@@ -83,8 +83,9 @@ class utils:
                 text = text[1:]
             if text[-1] in ('"', "'"):
                 text = text[:-1]
+            text = text.replace('\\', '\\\\')
         # <-- clear escape character -->
-        return text.replace('\\', '\\\\').decode('string_escape')
+        return text.decode('string_escape')
 
     def delete_space(self, temp):
         temp = temp.replace(' ', '')
