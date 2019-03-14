@@ -47,7 +47,9 @@ class utils:
             if st:
                 for i in st:
                     if '.join' not in i[1]:
-                        res.append(str(i[0] + i[1] + i[0]))
+                        sf = str(i[0] + i[1] + i[0])
+                        if sf[:2] not in ("''", '""'):
+                            res.append(sf)
         for l in res:
             for d in li:
                 if l in d:
@@ -81,7 +83,7 @@ class utils:
             if text[-1] in ('"', "'"):
                 text = text[:-1]
         # <-- clear escape character -->
-        return text.replace("\\'", "\'").replace('\\"', '\"').replace('\\x1b', '\x1b').replace('\\033', '\033').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
+        return text.replace("\\'", "\'").replace('\\"', '\"').replace('\\x1b', '\x1b').replace('\\033', '\033').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r').replace('\\u001b', '\u001b')
 
 class obfuscator(object):
     def __init__(self, arg, utils):
