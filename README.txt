@@ -9,6 +9,9 @@
    $ cd no-strint
    $ python2 setup.py install or pip install .
    $ strint -h
+   
+   # via pip
+   $ pip2 install strint
 
 # update -> 1.4.3
 * Add new options: [--no-space] generate output strings
