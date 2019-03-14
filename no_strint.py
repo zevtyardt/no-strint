@@ -14,7 +14,7 @@ def encode(string):
              s))(lambda f, s: sum(f[i] * 256 ** i for i in \
             range(len(f))), str(string))
 
-def parser_args():
+def command_line():
     parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  --infile <file> [--only-strint] [--outfile <file>]\n      {0}  [--no-space] [--eval or [(--debug|--verbose)]]'.format(" " * len(sys.argv[0].split('/')[-1])),
               description=banner, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
@@ -159,15 +159,15 @@ class obfuscator(object):
 
 class strint(object):
     def __init__(self):
-        self.parser = parser_args()
+        self.parser = command_line()
         self.arg = self.parser.parse_args()
         self.utils = utils(self.arg)
         self.obfuscator = obfuscator(self.arg, self.utils)
         self.set_options()
-    #    try:
-        self.rebuild()
-     #   except Exception as e:
-      #      print ('Traceback: %s' % e)
+        try:
+            self.rebuild()
+        except Exception as e:
+            print ('Traceback: %s' % e)
 
     def rebuild(self):
         if self.arg.txt or self.arg.infile:
