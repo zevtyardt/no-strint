@@ -75,7 +75,7 @@ class utils:
             del a[a.index(i)]
         return res
 
-    def fix_text(self, text):
+    def decoding_escape(self, text):
         if self.arg.only_strint and self.arg.infile:
             if text[0] in ('r', "u"):
                 text = text[1:]
@@ -189,7 +189,7 @@ class strint(object):
                         print ('# skipped: duplicate string'); continue
                     sdh.append(text)
                     text_old = text
-                    text = self.utils.fix_text(text_old)
+                    text = self.utils.decoding_escape(text_old)
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
