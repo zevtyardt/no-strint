@@ -4,10 +4,16 @@ import sys
 import re
 import argparse
 
+__version__ = '1.4.6'
+
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.4.5 (https://github.com/zevtyardt)'
+banner = '''    _
+   (o)
+  (_|_) <no strint> {0} @ zvtyrdt.id
+   |||  (https://github.com/zevtyardt)
+'''.format(__version__)
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -16,7 +22,8 @@ def encode(string):
 
 def command_line():
     parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  --infile <file> [--only-strint] [--outfile <file>]\n      {0}  [--no-space] [--eval or [(--debug|--verbose)]]'.format(" " * len(sys.argv[0].split('/')[-1])),
-              description=banner, formatter_class=argparse.RawTextHelpFormatter)
+             description=banner, formatter_class=argparse.RawTextHelpFormatter,
+             version=__version__)
     parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
     parser.add_argument('--infile', metavar='file', help='specify the file name to process')
     parser.add_argument('--outfile', metavar='file', help='save the results as a file')
