@@ -292,7 +292,7 @@ class strint(object):
 
     def clear_base(self, base_):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
-            base_ = base_.replace(i, '{} # unload text in three quotes'.format(repr(i)[3:-3]))
+            base_ = base_.replace(i, '{} # unpack text in three quotes'.format(repr(i)[3:-3]))
         return base_
 
 def main():
