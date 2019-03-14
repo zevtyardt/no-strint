@@ -7,7 +7,7 @@ import argparse
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.4.4 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.4.5 (https://github.com/zevtyardt)'
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -34,6 +34,7 @@ class utils:
     def __init__(self, arg):
         self.arg = arg
         self.sep = self._sep
+        self.only_strint = self.arg.only_strint and self.arg.infile
 
     def _sep(self, x):
         print ('----- {0:-<35}'.format((x + ' ').upper()))
@@ -54,10 +55,8 @@ class utils:
         for l in res:
             for d in li:
                 if l in d:
-                    if re.search(r're\.*?\(', d):
-                        l = l.replace('\\', '\\\\')
                     if "r{}".format(l) in d:
-                        l = 'r{}'.format(l)
+                        l = 'r{}'.format(l.replace('\\', '\\\\'))
                     elif "u{}".format(l) in d:
                         l = 'u{}'.format(l)
                     break
@@ -78,8 +77,8 @@ class utils:
         return res
 
     def unescape(self, text):
-        if self.arg.only_strint and self.arg.infile:
-            if text[0] in ('r', "u"):
+        if self.only_strint:
+            if re.search(r'(?:r|u)', text[0]):
                 text = text[1:]
             if text[0] in ('"', "'"):
                 text = text[1:]
@@ -190,8 +189,9 @@ class strint(object):
                     if text in sdh:
                         print ('# skipped: duplicate string'); continue
                     sdh.append(text)
-                    text_old = text
-                    text = self.utils.unescape(text_old)
+                    text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
+                    text = self.utils.unescape(text)
+
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
@@ -207,7 +207,7 @@ class strint(object):
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
                         self.utils.sep('original strint')
                         if not self.arg.encode:
-                            print (text_old)
+                            print text_old
                         else:
                             print ('{} -> {}'.format(text_old, text))
                     if text.isdigit() and not self.arg.encode:
