@@ -54,8 +54,6 @@ class utils:
         for l in res:
             for d in li:
                 if l in d:
-                    if re.search(r'\\', l):
-                        l = l.replace('\\', '\\\\')
                     if "r{}".format(l) in d:
                         l = 'r{}'.format(l)
                     elif "u{}".format(l) in d:
@@ -77,7 +75,7 @@ class utils:
             del a[a.index(i)]
         return res
 
-    def decoding_escape(self, text):
+    def unescape(self, text):
         if self.arg.only_strint and self.arg.infile:
             if text[0] in ('r', "u"):
                 text = text[1:]
@@ -86,7 +84,7 @@ class utils:
             if text[-1] in ('"', "'"):
                 text = text[:-1]
         # <-- clear escape character -->
-        return text.decode('string_escape')
+        return text.replace('\\', '\\\\').decode('string_escape')
 
     def delete_space(self, temp):
         temp = temp.replace(' ', '')
@@ -191,7 +189,7 @@ class strint(object):
                         print ('# skipped: duplicate string'); continue
                     sdh.append(text)
                     text_old = text
-                    text = self.utils.decoding_escape(text_old)
+                    text = self.utils.unescape(text_old)
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
