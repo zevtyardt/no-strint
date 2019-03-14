@@ -7,7 +7,7 @@ import argparse
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '<no strint> 1.4.3 (https://github.com/zevtyardt)'
+banner = '<no strint> 1.4.4 (https://github.com/zevtyardt)'
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -54,6 +54,8 @@ class utils:
         for l in res:
             for d in li:
                 if l in d:
+                    if re.search(r're\.*?\(', d):
+                        l = l.replace('\\', '\\\\')
                     if "r{}".format(l) in d:
                         l = 'r{}'.format(l)
                     elif "u{}".format(l) in d:
@@ -83,7 +85,6 @@ class utils:
                 text = text[1:]
             if text[-1] in ('"', "'"):
                 text = text[:-1]
-            text = text.replace('\\', '\\\\')
         # <-- clear escape character -->
         return text.decode('string_escape')
 
