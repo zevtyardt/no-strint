@@ -10,6 +10,9 @@
    $ python2 setup.py install or pip install .
    $ strint -h
 
+# update -> 1.4.2
+* fix a bug where the character escape cannot work
+
 # update -> 1.4.1
 * OOP (Object Oriented Programming)
 * fix some bugs
