@@ -1,9 +1,15 @@
-from redat import *
-from math import ceil, log
+#!usr/bin/python2
+# -*- encoding:utf-8 -*-
+
 from random import choice as R
+from math import ceil, log
+from esoteric import jsfuck
+from redat import *
 import command_line
 import sys
 import re
+
+algo = {'jsfuck': jsfuck}
 
 sys.setrecursionlimit(999999999)
 
@@ -163,117 +169,126 @@ class strint(object):
         self.utils = utils(self.arg)
         self.obfuscator = obfuscator(self.arg, self.utils)
         self.set_options()
+        self.begin()
+
+    def begin(self):
         try:
-            self.rebuild()
+            if self.arg.txt or self.arg.infile:
+                self.base = self.grep_content()
+                for alg in algo:
+                    if self.arg.__dict__[alg]:
+                        rtr = algo[alg].obfuscate(self.base[0])
+                        print (rtr)
+
+                        sys.exit()
+                self.rebuild()
+            else:
+                print (BANNER)
+                self.parser.print_usage()
         except IOError as e:
             print ('Traceback: %s' % e)
 
     def rebuild(self):
-        if self.arg.txt or self.arg.infile:
-            self.base = self.grep_content()
-            self.ori = self.clear_base(self.base[0])
-            for unix in range(2 if self.only_strint else 1):
-                if self.only_strint:
-                    if unix == 0:
-                        self.base = self.utils.findstr(self.ori.splitlines())
-                    else:
-                        self.base, efa = [], re.findall(r'([\d.]*)', self.ori)
-                        for s in efa:
-                            if s not in self.base and not s.startswith('.') and s != '':
-                                self.base.append(s)
-                eu = self.utils.sort(self.base)
-                sdh = []
-                for text in eu:
-                    if text in sdh:
-                        print ('# skipped: duplicate string'); continue
-                    sdh.append(text)
-                    text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
-                    text = self.utils.unescape(text)
-                    if text == '':
-                        temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
-                        if self.arg._exec:
-                            print ('# can\'t execute NoneType string')
-                            self.arg._exec = False
-                    if self.bs_en:
-                        self.arg.encode = True
-                        if text.isdigit():
-                            print ('# disable encoding string: int found')
-                            self.arg.encode = False
-                    if self.arg.encode:
-                        text = str(encode(text))
-                    if self.arg.debug or self.arg._eval or self.arg.verbose:
-                        self.utils.sep('original strint')
-                        if not self.arg.encode:
-                            print text_old
-                        else:
-                            print ('{} -> {}'.format(text_old, text))
-                    if text.isdigit() and not self.arg.encode:
-                        if text == '0':
-                            temp = self.obfuscator.sub_obfus(0)
-                        else:
-                            temp = self.obfuscator.convert(int(text))
-                        if self.only_strint:
-                            temp = 'int ' + temp
-                    else:
-                        B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( [ chr ( _ ) for _ in [ %s ] ] )'.format(self.obfuscator.sub_obfus(0))
-                        if self.arg.encode:
-                            B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : {1} ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256), self.obfuscator.sub_obfus(0))
-                        ch = lambda tx: ' , '.join([self.obfuscator.convert(ord(i)) for i in tx])
-                        chg = lambda inf: B.replace('%s', inf)
-                        if self.arg.stdout:
-                            if text == '':
-                                B = '%s'
-                            F = 'getattr ( __import__ ( True . __class__ . __name__ [ {0} ] + [ ] . __class__ . __name__ [ {1} ] ) , ( ) . __class__ . __eq__ . __class__ . __name__ [ : {1} ] + ( ) . __iter__ ( ) . __class__ . __name__ [ {2} : {3} ] ) ( {0}, {4} + chr ( {5} + {5} ) )'.format(self.obfuscator.sub_obfus(1), self.obfuscator.sub_obfus(2), self.obfuscator.sub_obfus(5), self.obfuscator.sub_obfus(8), B, self.obfuscator.sub_obfus(5) )
-                        elif self.arg._exec:
-                            F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ {6} ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B, self.obfuscator.sub_obfus(0))
-                        if text != '':
-                            if self.arg.encode:
-                                obfuscate_string = self.obfuscator.convert(int(text))
-                            else:
-                                obfuscate_string = ch(text)
-                            temp = F.replace('%s', obfuscate_string)
-                        else:
-                            if self.arg.stdout:
-                                temp = F.replace('%s', temp)
-                    if self.arg.no_space:
-                        temp = self.utils.delete_space(temp)
-                    if self.only_strint:
-                        reb = None
-                        if '.' in text_old and unix == 1:
-                            reb = 'float ( str ( %s ) )'
-                        ur = text_old[0]
-                        if ur == 'u':
-                            reb = 'u"{}".format ( %s )'
-                        if ur == 'r':
-                            reb = 'r"{}".format ( %s )'
-                        if reb:
-                            if self.arg.no_space:
-                                reb = reb.replace(' ', '')
-                            temp = reb % temp
-                        if self.arg.verbose or self.arg.debug:
-                            self.utils.sep('temp')
-                            print (temp)
-                        self.ori = self.ori.replace(text_old, temp)
-                    else:
-                        final = temp
+        self.ori = self.clear_base(self.base[0])
+        for unix in range(2 if self.only_strint else 1):
             if self.only_strint:
-                self.ori = self.utils.comment(self.ori)
-            final = self.ori if self.only_strint else final
-            if self.arg.debug or self.arg._eval or self.arg.verbose:
-                self.utils.sep('result')
-            # <-- output -->
-            print (final)
-            if not self.only_strint:
-                if self.arg.debug or self.arg._eval:
-                    self.utils.sep('eval')
-                    print (eval(final))
-            if self.arg.outfile:
-                self.utils.sep('save')
-                open(self.arg.outfile, 'w').write(final)
-                print ('all done.. saved as %s' % self.arg.outfile)
-        else:
-            print (BANNER)
-            self.parser.print_usage()
+                if unix == 0:
+                    self.base = self.utils.findstr(self.ori.splitlines())
+                else:
+                    self.base, efa = [], re.findall(r'([\d.]*)', self.ori)
+                    for s in efa:
+                        if s not in self.base and not s.startswith('.') and s != '':
+                            self.base.append(s)
+            eu = self.utils.sort(self.base)
+            sdh = []
+            for text in eu:
+                if text in sdh:
+                    print ('# skipped: duplicate string'); continue
+                sdh.append(text)
+                text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
+                text = self.utils.unescape(text)
+                if text == '':
+                    temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
+                    if self.arg._exec:
+                        print ('# can\'t execute NoneType string')
+                        self.arg._exec = False
+                if self.bs_en:
+                    self.arg.encode = True
+                    if text.isdigit():
+                        print ('# disable encoding string: int found')
+                        self.arg.encode = False
+                if self.arg.encode:
+                    text = str(encode(text))
+                if self.arg.debug or self.arg._eval or self.arg.verbose:
+                    self.utils.sep('original strint')
+                    if not self.arg.encode:
+                        print text_old
+                    else:
+                        print ('{} -> {}'.format(text_old, text))
+                if text.isdigit() and not self.arg.encode:
+                    if text == '0':
+                        temp = self.obfuscator.sub_obfus(0)
+                    else:
+                        temp = self.obfuscator.convert(int(text))
+                    if self.only_strint:
+                        temp = 'int ' + text
+                else:
+                    B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( [ chr ( _ ) for _ in [ %s ] ] )'.format(self.obfuscator.sub_obfus(0))
+                    if self.arg.encode:
+                        B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : {1} ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256), self.obfuscator.sub_obfus(0))
+                    ch = lambda tx: ' , '.join([self.obfuscator.convert(ord(i)) for i in tx])
+                    chg = lambda inf: B.replace('%s', inf)
+                    if self.arg.stdout:
+                        if text == '':
+                            B = '%s'
+                        F = 'getattr ( __import__ ( True . __class__ . __name__ [ {0} ] + [ ] . __class__ . __name__ [ {1} ] ) , ( ) . __class__ . __eq__ . __class__ . __name__ [ : {1} ] + ( ) . __iter__ ( ) . __class__ . __name__ [ {2} : {3} ] ) ( {0}, {4} + chr ( {5} + {5} ) )'.format(self.obfuscator.sub_obfus(1), self.obfuscator.sub_obfus(2), self.obfuscator.sub_obfus(5), self.obfuscator.sub_obfus(8), B, self.obfuscator.sub_obfus(5) )
+                    elif self.arg._exec:
+                        F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ {6} ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B, self.obfuscator.sub_obfus(0))
+                    if text != '':
+                        if self.arg.encode:
+                            obfuscate_string = self.obfuscator.convert(int(text))
+                        else:
+                            obfuscate_string = ch(text)
+                        temp = F.replace('%s', obfuscate_string)
+                    else:
+                        if self.arg.stdout:
+                            temp = F.replace('%s', temp)
+                if self.arg.no_space:
+                    temp = self.utils.delete_space(temp)
+                if self.only_strint:
+                    reb = None
+                    if '.' in text_old and unix == 1:
+                        reb = 'float ( str ( %s ) )'
+                    ur = text_old[0]
+                    if ur == 'u':
+                        reb = 'u"{}".format ( %s )'
+                    if ur == 'r':
+                        reb = 'r"{}".format ( %s )'
+                    if reb:
+                        if self.arg.no_space:
+                            reb = reb.replace(' ', '')
+                        temp = reb % temp
+                    if self.arg.verbose or self.arg.debug:
+                        self.utils.sep('temp')
+                        print (temp)
+                    self.ori = self.ori.replace(text_old, temp)
+                else:
+                    final = temp
+        if self.only_strint:
+            self.ori = self.utils.comment(self.ori)
+        final = self.ori if self.only_strint else final
+        if self.arg.debug or self.arg._eval or self.arg.verbose:
+            self.utils.sep('result')
+        # <-- output -->
+        print (final)
+        if not self.only_strint:
+            if self.arg.debug or self.arg._eval:
+                self.utils.sep('eval')
+                print (eval(final))
+        if self.arg.outfile:
+            self.utils.sep('save')
+            open(self.arg.outfile, 'w').write(final)
+            print ('all done.. saved as %s' % self.arg.outfile)
 
     def set_options(self):
         if self.arg._exec:
