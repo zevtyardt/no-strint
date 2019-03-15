@@ -1,39 +1,16 @@
 from redat import *
 from math import ceil, log
 from random import choice as R
+import command_line
 import sys
 import re
-import argparse
-
-__version__ = '1.4.9'
 
 sys.setrecursionlimit(999999999)
-if sys.version_info.major != 2:
-    sys.exit('run as python2')
-banner = BANNER.format(__version__)
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
              s))(lambda f, s: sum(f[i] * 256 ** i for i in \
             range(len(f))), str(string))
-
-def command_line():
-    parser = argparse.ArgumentParser(usage='%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  [--infile <file> [--only-strint]] [--outfile <file>]\n      {0}  [--no-space] [--eval or (--debug|--verbose)]'.format(" " * len(sys.argv[0].split('/')[-1])),
-             description='simple str & int obfuscator',
-             formatter_class=argparse.RawTextHelpFormatter,
-             version=__version__)
-    parser.add_argument('txt', metavar='str | int', nargs='*', help='string or interger')
-    parser.add_argument('--infile', metavar='file', help='specify the file name to process')
-    parser.add_argument('--outfile', metavar='file', help='save the results as a file')
-    parser.add_argument('--no-space', action='store_true', help='generate output strings without spaces')
-    parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers')
-    parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
-    parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
-    parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
-    parser.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')
-    parser.add_argument('--verbose', action='store_true', help='verbose (debug)')
-    parser.add_argument('--debug', action='store_true', help='enable debug mode')
-    return parser
 
 class utils:
     def __init__(self, arg):
@@ -181,7 +158,7 @@ class obfuscator(object):
 
 class strint(object):
     def __init__(self):
-        self.parser = command_line()
+        self.parser = command_line.CLI()
         self.arg = self.parser.parse_args()
         self.utils = utils(self.arg)
         self.obfuscator = obfuscator(self.arg, self.utils)
@@ -295,7 +272,7 @@ class strint(object):
                 open(self.arg.outfile, 'w').write(final)
                 print ('all done.. saved as %s' % self.arg.outfile)
         else:
-            print (banner)
+            print (BANNER)
             self.parser.print_usage()
 
     def set_options(self):
@@ -317,3 +294,4 @@ class strint(object):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
             base_ = base_.replace(i, '{} # repr'.format(repr(i)[3:-3]))
         return base_
+
