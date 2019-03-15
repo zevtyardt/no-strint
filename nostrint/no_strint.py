@@ -94,11 +94,6 @@ class utils:
         # <-- clear escape character -->
         return text.decode('string_escape')
 
-    def refix(self, text):
-        for num in range(10):
-            text = text.replace(NEW_VAR[num], str(num))
-        return text
-
     def delete_space(self, temp):
         temp = temp.replace(' ', '')
         for rpt in ['for', 'in', 'if', 'else']:
@@ -216,7 +211,7 @@ class strint(object):
                         print ('# skipped: duplicate string'); continue
                     sdh.append(text)
                     text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
-                    text = self.utils.refix(self.utils.unescape(text))
+                    text = self.utils.unescape(text)
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
@@ -232,7 +227,7 @@ class strint(object):
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
                         self.utils.sep('original strint')
                         if not self.arg.encode:
-                            print self.utils.refix(text_old)
+                            print text_old
                         else:
                             print ('{} -> {}'.format(text_old, text))
                     if text.isdigit() and not self.arg.encode:
@@ -321,10 +316,8 @@ class strint(object):
     def clear_base(self, base_):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
             base_ = base_.replace(i, '{} # repr'.format(repr(i)[3:-3]))
-        for i in re.findall('(.*?)\=', base_):
-            for n in [int(x) for x in re.findall('(\d*)', i) if x.isdigit()]:
-                if i.endswith(' '):
-                    i = i[:-1]
-                new = i.replace(str(n), NEW_VAR[n])
-                base_ = base_.replace(i, new)
+
+        for i in re.findall(r'(.*?)(?:\=| |\,)', base_):
+            if [int(x) for x in re.findall(r'\d*', i) if x.isdigit()]:
+                raise SyntaxError('%s: can\'t assign variables with integers' % i)
         return base_
