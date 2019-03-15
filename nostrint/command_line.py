@@ -17,7 +17,7 @@ def CLI():
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
     parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
 
-    algorithm = parser.add_argument_group('esoteric langguage', description='* I will disable all options, except [(str|int) or --infile]')
+    algorithm = parser.add_argument_group('esoteric language', description='* I will disable all options, except [(str|int) or --infile]')
     algorithm.add_argument('--jsfuck', action='store_true', help='JSFuck is an esoteric subset of JavaScript (https://jsfuck.com)')
 
     verbosity = parser.add_argument_group('verbosity / simulation')
