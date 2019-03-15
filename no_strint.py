@@ -46,8 +46,7 @@ class utils:
     def _sep(self, x):
         print ('----- {0:-<35}'.format((x + ' ').upper()))
 
-    def findstr(self):
-        li = open(self.arg.infile).readlines()
+    def findstr(self, li):
         if self.arg.verbose:
             self.sep('search string')
         res, final = [], []
@@ -184,7 +183,7 @@ class strint(object):
             for unix in range(2 if self.only_strint else 1):
                 if self.only_strint:
                     if unix == 0:
-                        self.base = self.utils.findstr()
+                        self.base = self.utils.findstr(self.ori.splitlines())
                     else:
                         self.base, efa = [], re.findall(r'([\d.]*)', self.ori)
                         for s in efa:
