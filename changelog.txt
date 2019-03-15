@@ -1,5 +1,8 @@
+# update -> 1.4.9
+* add some esoteric languages
+
 # update -> 1.4.3
-* Add new options: [--no-space] generate output strings
+* add new options: [--no-space] generate output strings
                    without spaces
 
 # update -> 1.4.2
