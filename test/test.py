@@ -15,3 +15,8 @@ print '\nthis\nnewline\n'
 print '\x1b[32mwith \033[34mcolor\033[0m'
 
 print '\twith tab'
+
+print """
+
+multiline
+"""
