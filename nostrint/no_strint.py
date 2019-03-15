@@ -1,19 +1,16 @@
+from redat import *
 from math import ceil, log
 from random import choice as R
 import sys
 import re
 import argparse
 
-__version__ = '1.4.6'
+__version__ = '1.4.8'
 
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
     sys.exit('run as python2')
-banner = '''    _
-   (o)
-  (_|_) <no strint> {0} @ zvtyrdt.id
-   |||  (https://github.com/zevtyardt)
-'''.format(__version__)
+banner = BANNER.format(__version__)
 
 def encode(string):
     return (lambda f, s: f(list( ord(c) for c in str(string) ) , \
@@ -97,6 +94,11 @@ class utils:
         # <-- clear escape character -->
         return text.decode('string_escape')
 
+    def refix(self, text):
+        for num in range(10):
+            text = text.replace(NEW_VAR[num], str(num))
+        return text
+
     def delete_space(self, temp):
         temp = temp.replace(' ', '')
         for rpt in ['for', 'in', 'if', 'else']:
@@ -117,7 +119,7 @@ class utils:
                     if line[-3:] == '-*-':
                         sp = ' '
                     nee = line.replace('int' + cd, str(eval(cd)) + sp)
-                ori = ori.replace(line, nee)
+                    ori = ori.replace(line, nee)
         return ori
 
 class obfuscator(object):
@@ -214,8 +216,7 @@ class strint(object):
                         print ('# skipped: duplicate string'); continue
                     sdh.append(text)
                     text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
-                    text = self.utils.unescape(text)
-
+                    text = self.utils.refix(self.utils.unescape(text))
                     if text == '':
                         temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                         if self.arg._exec:
@@ -231,7 +232,7 @@ class strint(object):
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
                         self.utils.sep('original strint')
                         if not self.arg.encode:
-                            print text_old
+                            print self.utils.refix(text_old)
                         else:
                             print ('{} -> {}'.format(text_old, text))
                     if text.isdigit() and not self.arg.encode:
@@ -320,4 +321,10 @@ class strint(object):
     def clear_base(self, base_):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
             base_ = base_.replace(i, '{} # repr'.format(repr(i)[3:-3]))
+        for i in re.findall('(.*?)\=', base_):
+            for n in [int(x) for x in re.findall('(\d*)', i) if x.isdigit()]:
+                if i.endswith(' '):
+                    i = i[:-1]
+                new = i.replace(str(n), NEW_VAR[n])
+                base_ = base_.replace(i, new)
         return base_
