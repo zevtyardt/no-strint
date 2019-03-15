@@ -5,7 +5,7 @@ import sys
 import re
 import argparse
 
-__version__ = '1.4.8'
+__version__ = '1.4.9'
 
 sys.setrecursionlimit(999999999)
 if sys.version_info.major != 2:
