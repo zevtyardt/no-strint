@@ -7,7 +7,8 @@ import re
 
 from setuptools import setup, find_packages
 
-version = re.findall(r'__version__ = \'(.*?)\'', open('nostrint/no_strint.py').read())[0]
+version = re.findall(r'__version__ = \'(.*?)\'',
+          open('nostrint/redat.py').read())[0]
 
 setup(
     name='strint',
