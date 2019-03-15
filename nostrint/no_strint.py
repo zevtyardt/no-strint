@@ -316,8 +316,4 @@ class strint(object):
     def clear_base(self, base_):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
             base_ = base_.replace(i, '{} # repr'.format(repr(i)[3:-3]))
-
-        for i in re.findall(r'(.*?)(?:\=| |\,)', base_):
-            if [int(x) for x in re.findall(r'\d*', i) if x.isdigit()]:
-                raise SyntaxError('%s: can\'t assign variables with integers' % i)
         return base_
