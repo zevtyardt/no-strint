@@ -280,7 +280,7 @@ class strint(object):
         if self.arg.debug or self.arg._eval or self.arg.verbose:
             self.utils.sep('result')
         # <-- output -->
-#        print (final)
+        print (final)
         if not self.only_strint:
             if self.arg.debug or self.arg._eval:
                 self.utils.sep('eval')
