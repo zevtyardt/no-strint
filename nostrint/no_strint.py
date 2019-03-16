@@ -3,13 +3,14 @@
 
 from random import choice as R
 from math import ceil, log
+from esoteric import brainfuck
 from esoteric import jsfuck
 from redat import *
 import command_line
 import sys
 import re
 
-algo = {'jsfuck': jsfuck}
+algo = {'jsfuck': jsfuck, 'brainfuck': brainfuck}
 
 sys.setrecursionlimit(999999999)
 
@@ -179,7 +180,6 @@ class strint(object):
                     if self.arg.__dict__[alg]:
                         rtr = algo[alg].obfuscate(self.base[0])
                         print (rtr)
-
                         sys.exit()
                 self.rebuild()
             else:
@@ -231,7 +231,7 @@ class strint(object):
                     else:
                         temp = self.obfuscator.convert(int(text))
                     if self.only_strint:
-                        temp = 'int ' + text
+                        temp = 'int ' + temp
                 else:
                     B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( [ chr ( _ ) for _ in [ %s ] ] )'.format(self.obfuscator.sub_obfus(0))
                     if self.arg.encode:
@@ -253,7 +253,7 @@ class strint(object):
                     else:
                         if self.arg.stdout:
                             temp = F.replace('%s', temp)
-                if self.arg.no_space:
+                if self.arg.with_space:
                     temp = self.utils.delete_space(temp)
                 if self.only_strint:
                     reb = None
@@ -265,7 +265,7 @@ class strint(object):
                     if ur == 'r':
                         reb = 'r"{}".format ( %s )'
                     if reb:
-                        if self.arg.no_space:
+                        if self.arg.with_space:
                             reb = reb.replace(' ', '')
                         temp = reb % temp
                     if self.arg.verbose or self.arg.debug:
@@ -280,7 +280,7 @@ class strint(object):
         if self.arg.debug or self.arg._eval or self.arg.verbose:
             self.utils.sep('result')
         # <-- output -->
-        print (final)
+#        print (final)
         if not self.only_strint:
             if self.arg.debug or self.arg._eval:
                 self.utils.sep('eval')
