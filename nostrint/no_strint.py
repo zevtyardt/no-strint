@@ -224,15 +224,15 @@ class strint(object):
                         print ('{} -> {}'.format(text_old, text))
                 if text.isdigit() and not self.arg.encode:
                     if text == '0':
-                        temp = 'int()'
+                        temp = self.obfuscator.sub_obfus(0)
                     else:
                         temp = self.obfuscator.convert(int(text))
                     if self.only_strint and text != '0':
                         temp = 'int ' + temp
                 else:
-                    B = F = '( ( lambda : int ( ) ) . func_code . co_lnotab ) . join ( map ( chr , [ %s ] ) )'
+                    B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( map ( chr , [ %s ] ) )'.format(self.obfuscator.sub_obfus(0))
                     if self.arg.encode:
-                        B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : int ( ) ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256))
+                        B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : {1} ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256), self.obfuscator.sub_obfus(0))
                     ch = lambda tx: ' , '.join([self.obfuscator.convert(ord(i)) for i in tx])
                     chg = lambda inf: B.replace('%s', inf)
                     if self.arg.stdout:
@@ -240,7 +240,7 @@ class strint(object):
                             B = '%s'
                         F = 'getattr ( __import__ ( True . __class__ . __name__ [ {0} ] + [ ] . __class__ . __name__ [ {1} ] ) , ( ) . __class__ . __eq__ . __class__ . __name__ [ : {1} ] + ( ) . __iter__ ( ) . __class__ . __name__ [ {2} : {3} ] ) ( {0}, {4} + chr ( {5} + {5} ) )'.format(self.obfuscator.sub_obfus(1), self.obfuscator.sub_obfus(2), self.obfuscator.sub_obfus(5), self.obfuscator.sub_obfus(8), B, self.obfuscator.sub_obfus(5) )
                     elif self.arg._exec:
-                        F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ int ( ) ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B)
+                        F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ {6} ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B, self.obfuscator.sub_obfus(0))
                     if text != '':
                         if self.arg.encode:
                             obfuscate_string = self.obfuscator.convert(int(text))
@@ -256,11 +256,10 @@ class strint(object):
                     reb = None
                     if '.' in text_old and unix == 1:
                         reb = 'float ( str ( %s ) )'
-                    ur = text_old[0]
-                    if ur == 'u':
-                        reb = 'u"{}".format ( %s )'
-                    if ur == 'r':
-                        reb = 'r"{}".format ( %s )'
+                    for ur in ('r', 'u'):
+                        if text_old[0] == ur:
+                            reb = ur + '"{}".format ( %s )'
+                            break
                     if reb:
                         if self.arg.with_space:
                             reb = reb.replace(' ', '')
