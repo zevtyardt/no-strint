@@ -9,7 +9,6 @@ from setuptools import setup, find_packages
 
 version = re.findall(r'__version__ = \'(.*?)\'',
           open('nostrint/redat.py').read())[0]
-
 setup(
     name='strint',
     version=version,
@@ -25,4 +24,4 @@ setup(
     entry_points={'console_scripts': ['strint=nostrint.__main__:main']}
 )
 
-print ("\n\nnow you can run by using the 'strint' command. to uninstall 'pip2 uninstall strint'\n")
+print ("\nnow you can run by using the 'strint' command. to uninstall 'pip2 uninstall strint'\n")
