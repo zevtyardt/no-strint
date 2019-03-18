@@ -2,8 +2,8 @@
 * add some esoteric languages
 
 # update -> 1.4.3
-* add new options: [--no-space] generate output strings
-                   without spaces
+* add new options: [--with-space] generate output strings
+                   with spaces
 
 # update -> 1.4.2
 * fix a bug where the character escape cannot work
