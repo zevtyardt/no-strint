@@ -4,6 +4,7 @@ a = 0
 b = 1.2
 c = 'abc..'
 d = 'can\'t'
+u7 = 8 # variable with int
 
 if c[0] == random.choice(['a', 'b']):
     print ('tes', 'again')
@@ -16,7 +17,4 @@ print '\x1b[32mwith \033[34mcolor\033[0m'
 
 print '\twith tab'
 
-print """
-
-multiline
-"""
+print "u7"
