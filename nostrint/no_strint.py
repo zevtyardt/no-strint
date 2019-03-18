@@ -3,6 +3,7 @@
 
 from random import choice as R
 from math import ceil, log
+from converter import nwords
 from esoteric import brainfuck
 from esoteric import jsfuck
 from redat import *
@@ -227,7 +228,7 @@ class strint(object):
                         temp = self.obfuscator.sub_obfus(0)
                     else:
                         temp = self.obfuscator.convert(int(text))
-                    if self.only_strint and text != '0':
+                    if self.only_strint:
                         temp = 'int ' + temp
                 else:
                     B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( map ( chr , [ %s ] ) )'.format(self.obfuscator.sub_obfus(0))
@@ -319,8 +320,9 @@ class strint(object):
                     for new_var in variable.split(','):
                         old_var = new_var
                         if old_var not in self.revar:
-                            for int_var in re.findall(r'\d', new_var):
-                                new_var = new_var.replace(int_var,  real_int[int(int_var)])
+                            for int_var in re.findall(r'\d*', new_var):
+                                if int_var.isdigit():
+                                    new_var = new_var.replace(int_var, nwords(int(int_var)))
                             self.revar[old_var] = new_var
                         else:
                             new_var = self.revar[old_var]
