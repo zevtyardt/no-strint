@@ -40,18 +40,15 @@ class utils:
                         sf = str(i[0] + i[1] + i[0])
                         if sf[:2] not in ("''", '""'):
                             res.append(sf)
-        triple_quotes = []
         for l in res:
             for d in li:
                 if l in d:
-                    if re.search('["\']', d[0]):
-                        triple_quotes.append(l)
                     if "r{}".format(l) in d:
                         l = 'r{}'.format(l.replace('\\', '\\\\'))
                     elif "u{}".format(l) in d:
                         l = 'u{}'.format(l)
                     break
-            if l not in final and l not in triple_quotes:
+            if l not in final:
                 final.append(l)
         if self.arg.verbose:
             print ('{} line -> {} string'.format(len(li), len(final)))
@@ -169,24 +166,22 @@ class strint(object):
         self.arg = self.parser.parse_args()
         self.utils = utils(self.arg)
         self.obfuscator = obfuscator(self.arg, self.utils)
+        self.revar = {}
         self.set_options()
         self.begin()
 
     def begin(self):
-        try:
-            if self.arg.txt or self.arg.infile:
-                self.base = self.grep_content()
-                for alg in algo:
-                    if self.arg.__dict__[alg]:
-                        rtr = algo[alg].obfuscate(self.base[0])
-                        print (rtr)
-                        sys.exit()
-                self.rebuild()
-            else:
-                print (BANNER)
-                self.parser.print_usage()
-        except IOError as e:
-            print ('Traceback: %s' % e)
+        if self.arg.txt or self.arg.infile:
+            self.base = self.grep_content()
+            for alg in algo:
+                if self.arg.__dict__[alg]:
+                    rtr = algo[alg].obfuscate(self.base[0])
+                    print (rtr)
+                    sys.exit()
+            self.rebuild()
+        else:
+            print (BANNER)
+            self.parser.print_usage()
 
     def rebuild(self):
         self.ori = self.clear_base(self.base[0])
@@ -207,6 +202,8 @@ class strint(object):
                 sdh.append(text)
                 text_old = text.decode('string_escape') if text[0] in ('r', 'u') else text
                 text = self.utils.unescape(text)
+                for var in self.revar:
+                    text = text.replace(self.revar[var], var)
                 if text == '':
                     temp = 'str ( ( lambda : {0} ) . func_code . co_lnotab )'
                     if self.arg._exec:
@@ -227,15 +224,15 @@ class strint(object):
                         print ('{} -> {}'.format(text_old, text))
                 if text.isdigit() and not self.arg.encode:
                     if text == '0':
-                        temp = self.obfuscator.sub_obfus(0)
+                        temp = 'int()'
                     else:
                         temp = self.obfuscator.convert(int(text))
-                    if self.only_strint:
+                    if self.only_strint and text != '0':
                         temp = 'int ' + temp
                 else:
-                    B = F = '( ( lambda : {0} ) . func_code . co_lnotab ) . join ( [ chr ( _ ) for _ in [ %s ] ] )'.format(self.obfuscator.sub_obfus(0))
+                    B = F = '( ( lambda : int ( ) ) . func_code . co_lnotab ) . join ( map ( chr , [ %s ] ) )'
                     if self.arg.encode:
-                        B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : {1} ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256), self.obfuscator.sub_obfus(0))
+                        B = F = '( lambda _ , __ : _ ( _ , __ ) ) ( lambda _ , __ : chr ( __ % {0} ) + _ ( _ , __ // {0} ) if __ else ( ( lambda : int ( ) ) . func_code . co_lnotab ) , %s )'.format(self.obfuscator.convert(256))
                     ch = lambda tx: ' , '.join([self.obfuscator.convert(ord(i)) for i in tx])
                     chg = lambda inf: B.replace('%s', inf)
                     if self.arg.stdout:
@@ -243,7 +240,7 @@ class strint(object):
                             B = '%s'
                         F = 'getattr ( __import__ ( True . __class__ . __name__ [ {0} ] + [ ] . __class__ . __name__ [ {1} ] ) , ( ) . __class__ . __eq__ . __class__ . __name__ [ : {1} ] + ( ) . __iter__ ( ) . __class__ . __name__ [ {2} : {3} ] ) ( {0}, {4} + chr ( {5} + {5} ) )'.format(self.obfuscator.sub_obfus(1), self.obfuscator.sub_obfus(2), self.obfuscator.sub_obfus(5), self.obfuscator.sub_obfus(8), B, self.obfuscator.sub_obfus(5) )
                     elif self.arg._exec:
-                        F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ {6} ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B, self.obfuscator.sub_obfus(0))
+                        F = "( lambda ___ : [ ( eval ( compile ( __ , {0} , {1} ) , None , ___ ) , None ) [ {2} ] for ___[ chr ( {3} ) * {4} ] in [ ( {5} ) ] ] [ int ( ) ] ) ( globals ( ) )".format(chg(ch('<string>')), chg(ch('exec')), self.obfuscator.sub_obfus(1), self.obfuscator.convert(95), self.obfuscator.sub_obfus(2), B)
                     if text != '':
                         if self.arg.encode:
                             obfuscate_string = self.obfuscator.convert(int(text))
@@ -281,9 +278,15 @@ class strint(object):
             self.utils.sep('result')
         # <-- output -->
         print (final)
-        if not self.only_strint:
-            if self.arg.debug or self.arg._eval:
-                self.utils.sep('eval')
+        # <-- exec -->
+        if self.arg.debug or self.arg._eval:
+            self.utils.sep('eval')
+            if self.only_strint:
+                try:
+                    eval(compile(final, '<string>', 'exec'))
+                except Exception as e:
+                    print ('Traceback: %s' % e)
+            else:
                 print (eval(final))
         if self.arg.outfile:
             self.utils.sep('save')
@@ -296,6 +299,7 @@ class strint(object):
         self.only_strint, self.bs_en = self.arg.only_strint and self.arg.infile, self.arg.encode
         if self.only_strint:
             self.arg.encode = False
+            self.arg._eval = False
             self.arg._exec = False
             self.arg.stdout = False
 
@@ -307,6 +311,24 @@ class strint(object):
 
     def clear_base(self, base_):
         for i in re.findall('(?s)(["\']{3}.*?["\']{3})', base_):
-            base_ = base_.replace(i, '{} # repr'.format(repr(i)[3:-3]))
+            base_ = base_.replace(i, '{}'.format(repr(i)[3:-3]))
+        for line in base_.splitlines():
+            old_line = line
+            for variable in re.findall(r'^(.*?)\=', line):
+                variable = re.sub(' ', '', variable)
+                if re.search(r'\d', variable):
+                    for new_var in variable.split(','):
+                        old_var = new_var
+                        if old_var not in self.revar:
+                            for int_var in re.findall(r'\d', new_var):
+                                new_var = new_var.replace(int_var,  real_int[int(int_var)])
+                            self.revar[old_var] = new_var
+                        else:
+                            new_var = self.revar[old_var]
+                        line = line.replace(old_var, new_var)
+            for test_var in self.revar:
+                if test_var in line:
+                    line = line.replace(test_var, self.revar[test_var])
+            base_ = base_.replace(old_line, line)
         return base_
 

@@ -17,7 +17,7 @@ def CLI():
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
     parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
 
-    algorithm = parser.add_argument_group('esoteric language', description='* I will disable all options, except [(str|int) and --infile]')
+    algorithm = parser.add_argument_group('esoteric language', description='* program will disable all options, except [(str|int) and --infile]')
     algorithm.add_argument('--jsfuck', action='store_true', help='string conversion into subsets of JavaScript\nsee https://jsfuck.com')
     algorithm.add_argument('--brainfuck', action='store_true', help='convert a char to brainfuck code\nsee https://esolangs.org/wiki/brainfuck')
 
