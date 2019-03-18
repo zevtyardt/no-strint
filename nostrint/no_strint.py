@@ -279,14 +279,9 @@ class strint(object):
         # <-- output -->
         print (final)
         # <-- exec -->
-        if self.arg.debug or self.arg._eval:
-            self.utils.sep('eval')
-            if self.only_strint:
-                try:
-                    eval(compile(final, '<string>', 'exec'))
-                except Exception as e:
-                    print ('Traceback: %s' % e)
-            else:
+        if not self.arg.infile:
+            if self.arg.debug or self.arg._eval:
+                self.utils.sep('eval')
                 print (eval(final))
         if self.arg.outfile:
             self.utils.sep('save')
@@ -316,7 +311,7 @@ class strint(object):
             old_line = line
             for variable in re.findall(r'^(.*?)\=', line):
                 variable = re.sub(' ', '', variable)
-                if re.search(r'\d', variable):
+                if re.search(r'\d*', variable):
                     for new_var in variable.split(','):
                         old_var = new_var
                         if old_var not in self.revar:
