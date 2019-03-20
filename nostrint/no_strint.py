@@ -213,14 +213,14 @@ class strint(object):
 
     def begin(self):
         algo = {'jsfuck': jsfuck, 'brainfuck': brainfuck}
-        if self.arg.only_strint:
-            if self.arg.infile:
-                _fin = self.obfuscator.rebuild()
-                print(_fin)
-                if self.arg.outfile:
-                    self.utils.savefile(_fin, self.arg.outfile)
-        elif not self.arg.only_strint:
-            if self.arg.txt or self.arg.infile:
+        if self.arg.txt or self.arg.infile:
+            if self.arg.only_strint:
+                if self.arg.infile:
+                    _fin = self.obfuscator.rebuild()
+                    print(_fin)
+                    if self.arg.outfile:
+                        self.utils.savefile(_fin, self.arg.outfile)
+            else:
                 _text = self.re_text()
                 if self.arg.verbose or self.arg.debug or self.arg._eval:
                     self.utils.sep('original strint')
