@@ -45,7 +45,7 @@ class utils:
         self.sep('save')
         with open(o, 'w') as f:
             f.write(x)
-        sys.exit('all done.. saved as %s' % o)
+        sys.exit('all done (%s bytes).. saved as %s' % (len(x), o))
 
     def fixing(self, x):
         """Remove spacebar and fix syntax"""
