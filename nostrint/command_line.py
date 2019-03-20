@@ -3,7 +3,7 @@ import argparse
 import sys
 
 def CLI():
-    parser = argparse.ArgumentParser(usage="%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  [--infile <file> [--only-strint]] [--outfile <file>]\n      {0}  [--no-space] [--eval or (--debug|--verbose)]\n      {0}  [--jsfuck or 'one of the esoteric language choices']".format(" " * len(sys.argv[0].split('/')[-1])),
+    parser = argparse.ArgumentParser(usage="%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  [--infile <file> [--only-strint]] [--outfile <file>]\n      {0}  [--no-space] [--eval or (--debug|--verbose)]\n".format(" " * len(sys.argv[0].split('/')[-1])),
              description='simple str & int obfuscator (c) zvtyrdt.id',
              formatter_class=argparse.RawTextHelpFormatter,
              version=__version__)
@@ -16,10 +16,6 @@ def CLI():
     parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
     parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
-
-    algorithm = parser.add_argument_group('esoteric language', description='* program will disable all options, except [(str|int) and --infile]')
-    algorithm.add_argument('--jsfuck', action='store_true', help='string conversion into subsets of JavaScript (https://jsfuck.com)')
-    algorithm.add_argument('--brainfuck', action='store_true', help='convert a char to brainfuck code')
 
     verbosity = parser.add_argument_group('verbosity / simulation')
     verbosity.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')

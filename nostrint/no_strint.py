@@ -12,8 +12,6 @@ from tokenize import *
 from template import *
 from random import choice as C, randrange as R
 from math import ceil, log
-from esoteric import brainfuck
-from esoteric import jsfuck
 from redat import *
 import command_line
 import sys
@@ -212,7 +210,6 @@ class strint(object):
         self.begin()
 
     def begin(self):
-        algo = {'jsfuck': jsfuck, 'brainfuck': brainfuck}
         if self.arg.txt or self.arg.infile:
             if self.arg.only_strint:
                 if self.arg.infile:
@@ -226,13 +223,6 @@ class strint(object):
                     self.utils.sep('original strint')
                     print(_text)
                 _text = _text.decode('string_escape')
-                for alg in algo:
-                    if self.arg.__dict__[alg]:
-                        _fin = algo[alg].obfuscate(_text)
-                        print(_fin)
-                        if self.arg.outfile:
-                           self.utils.savefile(_fin, self.arg.outfile)
-                        sys.exit(0)
                 if not _text.isdigit():
                     if self.arg.encode:
                         _fin = self.obfuscator.encode_base(_text)
