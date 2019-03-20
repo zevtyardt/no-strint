@@ -12,7 +12,7 @@ version = re.findall(r'__version__ = \'(.*?)\'',
 setup(
     name='strint',
     version=version,
-    description='simple str & int obfuscator',
+    description='python source code obfuscator. only obscures strings and integers',
     author='zvtyrdt.id',
     author_email='xnver404@gmail.com',
     url='https://github.com/zevtyardt/no-strint',
