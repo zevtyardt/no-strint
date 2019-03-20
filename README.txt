@@ -1,8 +1,4 @@
-! nemu bug atau output yang tidak sesuai? silahkan buat issue kalian kesini
-
-> https://github.com/zevtyardt/no-strint/issues <
-
-* satu issue dari anda sangat berarti bagi saya.
+python source code obfuscator. only obscures strings and integers
 
 >> installation
    $ git clone https://github.com/zevtyardt/no-strint
@@ -12,3 +8,6 @@
    
    # via pip
    $ pip2 install strint
+
+# issues
+  > https://github.com/zevtyardt/no-strint/issues <
