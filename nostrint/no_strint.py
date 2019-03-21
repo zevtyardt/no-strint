@@ -17,6 +17,7 @@ import command_line
 import sys
 import string
 import re
+import token
 
 # <-- settings -->
 sys.setrecursionlimit(999999999)
@@ -168,15 +169,6 @@ class obfuscator(object):
                                 self.utils.sep('added')
                                 print('{} -> line {}'.format(if_stat[if_stat.index('if'):], num + 1))
                             f.insert(num + 1, if_stat)
-                if self.arg.ignore_comments:
-                    jm = 0
-                    while i[jm].isspace():
-                        jm += 1
-                    if i[jm] == '#':
-                        if self.arg.debug:
-                            self.utils.sep('remove')
-                            print('{}.. line {}'.format(i[:32], num))
-                        del f[num]
             else:
                 if self.arg.remove_blanks:
                     if self.arg.debug:
@@ -186,18 +178,21 @@ class obfuscator(object):
         return '\n'.join(f)
 
     def rebuild(self):
-        if self.arg.rand_if or self.arg.remove_blanks or self.arg.ignore_comments:
+        if self.arg.rand_if or self.arg.remove_blanks:
             f = self.generate_new_script()
         else:
             f = open(self.arg.infile).read()
         res = [] # list
         for i in generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
-            if i[0] in (2, 3):
+            if self.arg.ignore_comments:
+                if token.tok_name[i[0]] == 'COMMENT':
+                    continue
+            if token.tok_name[i[0]] in ('NUMBER', 'STRING'):
                 if self.arg.debug or self.arg.verbose:
                     self.utils.sep('original strint')
                     print(i[1])
-            if i[0] == 3:
+            if token.tok_name[i[0]] == 'STRING':
                 new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1]
                 if i[1][0] in ('\'', '"'):
                     new = new.decode('string_escape')
@@ -205,12 +200,12 @@ class obfuscator(object):
                     i[1] = self.encode_base(new)
                 else:
                     i[1] = self.zero_base(new)
-            elif i[0] == 2:
+            elif token.tok_name[i[0]] == 'NUMBER':
                 if '.' in i[1]:
                     i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
                 else:
                     i[1] = self.convert(int(i[1]))
-            if i[0] in (2, 3):
+            if token.tok_name[i[0]] in ('NUMBER', 'STRING'):
                 if not self.arg.with_space:
                     i[1] = self.utils.fixing(i[1])
                 if self.arg.debug or self.arg.verbose:
