@@ -1,5 +1,7 @@
 # update -> 1.4.9
 * add some esoteric languages
+* add some extra blurring. such as deleting blank lines, deleting comments,
+  and additional if statements
 
 # update -> 1.4.3
 * add new options: [--with-space] generate output strings
