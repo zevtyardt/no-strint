@@ -178,7 +178,7 @@ class obfuscator(object):
                             print('{}.. line {}'.format(i[:32], num))
                         del f[num]
             else:
-                if self.arg.ignore_blanks:
+                if self.arg.remove_blanks:
                     if self.arg.debug:
                         self.utils.sep('remove')
                         print('blank lines ({})'.format(num))
@@ -186,7 +186,7 @@ class obfuscator(object):
         return '\n'.join(f)
 
     def rebuild(self):
-        if self.arg.rand_if or self.arg.ignore_blanks or self.arg.ignore_comments:
+        if self.arg.rand_if or self.arg.remove_blanks or self.arg.ignore_comments:
             f = self.generate_new_script()
         else:
             f = open(self.arg.infile).read()

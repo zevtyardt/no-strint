@@ -19,7 +19,7 @@ def CLI():
 
     obfuscate = parser.add_argument_group('additional', description='if the --only-string option is called')
     obfuscate.add_argument('--rand-if', action='store_true', help='add a random if statement to the source code')
-    obfuscate.add_argument('--ignore-blanks', action='store_true', help='remove blank lines, instead of obfuscate')
+    obfuscate.add_argument('--remove-blanks', action='store_true', help='remove blank lines, instead of obfuscate')
     obfuscate.add_argument('--ignore-comments', action='store_true', help='remove first block of comments as well')
 
     verbosity = parser.add_argument_group('verbosity / simulation')
