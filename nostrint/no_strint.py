@@ -172,7 +172,7 @@ class obfuscator(object):
                     jm = 0
                     while i[jm].isspace():
                         jm += 1
-                    if i[jm + 1] == '#':
+                    if i[jm] == '#':
                         if self.arg.debug:
                             self.utils.sep('remove')
                             print('{}.. line {}'.format(i[:32], num))
