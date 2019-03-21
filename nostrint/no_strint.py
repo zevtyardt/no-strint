@@ -157,7 +157,7 @@ class obfuscator(object):
         f = self.clear_text(self.arg.infile)
         for num, i in enumerate(f):
             if i not in ('\n', ""):
-                if R(1, 5) == 3:
+                if C([True, False]):
                     if i[-1] not in ('(', ',', ':', '\\'):
                         jm = 0
                         while i[jm].isspace():
@@ -214,6 +214,8 @@ class strint(object):
             if self.arg.only_strint:
                 if self.arg.infile:
                     _fin = self.obfuscator.rebuild()
+                    if self.arg.debug or self.arg._eval or self.arg.verbose:
+                        self.utils.sep('result')
                     print(_fin)
                     if self.arg.outfile:
                         self.utils.savefile(_fin, self.arg.outfile)
@@ -236,7 +238,7 @@ class strint(object):
                 # <-- NOT -->
                 else:
                     _fin = self.obfuscator.convert(int(_text))
-                if self.arg.debug or self.arg._eval:
+                if self.arg.debug or self.arg._eval or self.arg.verbose:
                     self.utils.sep('result')
                 if not self.arg.with_space:
                     _fin = self.utils.fixing(_fin)
