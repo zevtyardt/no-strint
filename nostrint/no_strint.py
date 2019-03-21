@@ -150,27 +150,47 @@ class obfuscator(object):
             f = f.replace(i, repr(i)[3:-3])
         return f.splitlines()
 
-    def remake(self):
+    def generate_new_script(self):
         if self.arg.debug:
             self.utils.sep('remake script')
             print('filename -> {}'.format(self.arg.infile))
         f = self.clear_text(self.arg.infile)
         for num, i in enumerate(f):
             if i not in ('\n', ""):
-                if C([True, False]):
-                    if i[-1] not in ('(', ',', ':', '\\'):
-                        jm = 0
-                        while i[jm].isspace():
-                            jm += 1
-                        if_stat = self.utils.rand_if(jm)
+                if self.arg.rand_if:
+                    if C([True, False]):
+                        if i[-1] not in ('(', ',', ':', '\\'):
+                            jm = 0
+                            while i[jm].isspace():
+                                jm += 1
+                            if_stat = self.utils.rand_if(jm)
+                            if self.arg.debug:
+                                self.utils.sep('added')
+                                print('{} -> line {}'.format(if_stat[if_stat.index('if'):], num + 1))
+                            f.insert(num + 1, if_stat)
+                if self.arg.ignore_comments:
+                    jm = 0
+                    while i[jm].isspace():
+                        jm += 1
+                    if i[jm + 1] == '#':
                         if self.arg.debug:
-                            self.utils.sep('added')
-                            print('{} -> line {}'.format(if_stat[if_stat.index('if'):], num + 1))
-                        f.insert(num + 1, if_stat)
+                            self.utils.sep('remove')
+                            print('{}.. line {}'.format(i[:32], num))
+                        del f[num]
+            else:
+                if self.arg.ignore_blanks:
+                    if self.arg.debug:
+                        self.utils.sep('remove')
+                        print('blank lines ({})'.format(num))
+                    del f[num]
         return '\n'.join(f)
 
     def rebuild(self):
-        f, res = self.remake(), []
+        if self.arg.rand_if or self.arg.ignore_blanks or self.arg.ignore_comments:
+            f = self.generate_new_script()
+        else:
+            f = open(self.arg.infile).read()
+        res = [] # list
         for i in generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
             if i[0] in (2, 3):

@@ -12,10 +12,15 @@ def CLI():
     parser.add_argument('--infile', metavar='file', help='specify the file name to process')
     parser.add_argument('--outfile', metavar='file', help='save the results as a file')
     parser.add_argument('--with-space', action='store_true', help='generate output strings with spaces')
-    parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers')
+    parser.add_argument('--only-strint', action='store_true', help='obfuscate strings and integers')
     parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
     parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
     parser.add_argument('--exec', action='store_true', dest='_exec', help='make the output an executable script')
+
+    obfuscate = parser.add_argument_group('additional', description='if the --only-string option is called')
+    obfuscate.add_argument('--rand-if', action='store_true', help='add a random if statement to the source code')
+    obfuscate.add_argument('--ignore-blanks', action='store_true', help='remove blank lines, instead of obfuscate')
+    obfuscate.add_argument('--ignore-comments', action='store_true', help='remove first block of comments as well')
 
     verbosity = parser.add_argument_group('verbosity / simulation')
     verbosity.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')
