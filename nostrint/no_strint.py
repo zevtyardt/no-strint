@@ -138,10 +138,10 @@ class obfuscator(object):
 
     # <-- shortcut -->
     def zero_base(self, x):
-        return ZERO_BASE.format(self.convert(0), self.en_words(x))
+        return C(ZERO_BASE).format(self.convert(0), self.en_words(x))
 
     def encode_base(self, x):
-        return ENCODE_BASE.format(self.convert(256), self.convert(0), self.convert(encode(x)))
+        return C(ENCODE_BASE).format(self.convert(256), self.convert(0), self.convert(encode(x)))
 
     # <-- rebuild script -->
     def clear_text(self, file):
@@ -230,9 +230,9 @@ class strint(object):
                         _fin = self.obfuscator.zero_base(_text)
                     # <-- next -->
                     if self.arg.stdout:
-                        _fin = STDOUT_BASE.format(self.obfuscator.convert(1), self.obfuscator.convert(2), self.obfuscator.convert(5), self.obfuscator.convert(8), _fin)
+                        _fin = C(STDOUT_BASE).format(self.obfuscator.convert(1), self.obfuscator.convert(2), self.obfuscator.convert(5), self.obfuscator.convert(8), _fin)
                     elif self.arg._exec:
-                        _fin = EXEC_BASE.format(self.obfuscator.zero_base('<string>'), self.obfuscator.zero_base('exec'), self.obfuscator.convert(1), self.obfuscator.convert(95), self.obfuscator.zero_base(_text), self.obfuscator.convert(0))
+                        _fin = C(EXEC_BASE).format(self.obfuscator.zero_base('<string>'), self.obfuscator.zero_base('exec'), self.obfuscator.convert(1), self.obfuscator.convert(95), self.obfuscator.zero_base(_text), self.obfuscator.convert(0))
                 # <-- NOT -->
                 else:
                     _fin = self.obfuscator.convert(int(_text))
