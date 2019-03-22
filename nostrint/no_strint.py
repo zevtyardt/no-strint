@@ -67,7 +67,7 @@ class utils:
        space = ''
        if space != 0:
            space = ' ' * space_lenght
-       return '{0}if {1} {2} {3} :\n{0}\t{4}'.format(space, R(1, 100), C(OPER),
+       return '{0}if {1} {2} {3} : {4}'.format(space, R(1, 100), C(OPER),
            R(1, 100), self._random_str(R(1, 20)))
 
 # <-- simple obfuscator -->
