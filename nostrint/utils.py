@@ -37,7 +37,7 @@ class utils:
         self.sep('save')
         with open(o, 'w') as f:
             f.write('#    _   @ {}\n#   (o)\n#  (_|_) <no strint> {} @ zvtyrdt.id\n#   |||  (https://github.com/zevtyardt)\n\n{}'.format(time.strftime('%c'), __version__, x))
-        sys.exit('all done (%s).. saved as %s' % (self.convertSize(len(x)), o))
+        sys.exit('all done (%s).. saved as %s' % (self.convertSize(len(x) + 124), o))
 
     def fixing(self, x):
         """Remove spacebar and fix syntax"""

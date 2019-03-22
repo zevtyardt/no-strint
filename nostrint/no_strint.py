@@ -20,6 +20,8 @@ import re
 import token
 
 # <-- settings -->
+reload(sys)
+sys.setdefaultencoding('utf8')
 sys.setrecursionlimit(999999999)
 
 # <-- encoding -->
@@ -155,7 +157,7 @@ class obfuscator(object):
                             # <-- update -->
                             prev = i
                             indx = 1
-                            if 'return' in i:
+                            if 'return' in i or 'yield' in i:
                                 indx = 0
                             f.insert(num + indx, if_stat)
         return '\n'.join(f)
