@@ -120,6 +120,8 @@ class obfuscator(object):
             f = f.replace(i, repr(i)[3:-3])
         if self.arg.ignore_comments:
             f = re.sub('#.*?\n', '', f)
+        if self.arg.remove_blanks:
+            f = re.sub('\n\n', '\n', f)
         return f.splitlines()
 
     def generate_new_script(self):
@@ -129,13 +131,7 @@ class obfuscator(object):
             print('filename -> {}'.format(self.arg.infile))
         f = self.clear_text(self.arg.infile)
         for num, i in enumerate(f):
-            if i in ('\n', ""):
-                if self.arg.remove_blanks:
-                    if self.arg.debug:
-                        self.utils.sep('remove')
-                        print('blank lines ({})'.format(num))
-                    del f[num]
-            else:
+            if i not in ('\n', ""):
                 if self.arg.rand_if:
                     if C([True, False]):
                         if i[-1] not in EXTH:
@@ -144,11 +140,12 @@ class obfuscator(object):
                                     if f[num + 1][0] in EXCH or 'else' in f[num + 1]:
                                         continue
                             jm = self._space(i)
-                            if f[num - 1][-1] in EXTH:
-                                if self._space(f[num - 1]) != jm:
-                                    continue
-                                if i[-1] in EXCH:
-                                    continue
+                            if len(f[num - 1]) > 0:
+                                if f[num - 1][-1] in EXTH:
+                                    if self._space(f[num - 1]) != jm:
+                                        continue
+                                    if i[-1] in EXCH:
+                                        continue
                             if_stat = self.utils.rand_if(jm)
                             if prev == i or prev == f[num - 1]:
                                 if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
@@ -211,6 +208,7 @@ class strint(object):
         if self.arg.txt or self.arg.infile:
             if self.arg.only_strint:
                 if self.arg.infile:
+                    compile(open(self.arg.infile).read(), '<string>', 'exec') # cek source code
                     _fin = self.obfuscator.rebuild()
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
                         self.utils.sep('result')

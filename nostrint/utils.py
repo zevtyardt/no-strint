@@ -2,6 +2,7 @@ from redat import OPER, __version__
 from random import choice as C, randrange as R
 import sys
 import string
+import time
 
 class utils:
     def convertSize(self, n, format='%(value).1f %(symbol)s', symbols='customary'):
@@ -35,7 +36,7 @@ class utils:
         """Save Result into the file"""
         self.sep('save')
         with open(o, 'w') as f:
-            f.write('#    _\n#   (o)\n#  (_|_) <no strint> {} @ zvtyrdt.id\n#   |||  (https://github.com/zevtyardt)\n\n{}'.format(__version__, x))
+            f.write('#    _   @ {}\n#   (o)\n#  (_|_) <no strint> {} @ zvtyrdt.id\n#   |||  (https://github.com/zevtyardt)\n\n{}'.format(time.strftime('%c'), __version__, x))
         sys.exit('all done (%s).. saved as %s' % (self.convertSize(len(x)), o))
 
     def fixing(self, x):
