@@ -234,6 +234,8 @@ class strint(object):
                     print(_fin)
                     if self.arg.outfile:
                         self.utils.savefile(_fin, self.arg.outfile)
+                else:
+                    self.parser.error('argument --infile is required')
             else:
                 _text = self.re_text()
                 if self.arg.verbose or self.arg.debug or self.arg._eval:
