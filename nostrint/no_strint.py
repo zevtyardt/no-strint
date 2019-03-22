@@ -269,6 +269,7 @@ class strint(object):
 
     def set_options(self):
         if self.arg.obf:
+            self.arg.only_strint = True
             self.arg.ignore_comments = True
             self.arg.remove_blanks = True
             self.arg.rand_if = True
