@@ -21,6 +21,8 @@ def CLI():
     obfuscate.add_argument('--rand-if', action='store_true', help='add a random if statement to the source code')
     obfuscate.add_argument('--remove-blanks', action='store_true', help='remove blank lines, instead of obfuscate')
     obfuscate.add_argument('--ignore-comments', action='store_true', help='remove first block of comments as well')
+    obfuscate.add_argument('--obf', action='store_true', help='same as --rand-if, --remove-blanks, --ignore-comments')
+
 
     verbosity = parser.add_argument_group('verbosity / simulation')
     verbosity.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')

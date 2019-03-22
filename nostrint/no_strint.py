@@ -67,7 +67,7 @@ class utils:
        space = ''
        if space != 0:
            space = ' ' * space_lenght
-       return '{0}if {1} {2} {3} : {4}'.format(space, R(1, 100), C(OPER),
+       return '{0}if {1} {2} {3} :\n{0}\t{4}'.format(space, R(1, 100), C(OPER),
            R(1, 100), self._random_str(R(1, 20)))
 
 # <-- simple obfuscator -->
@@ -268,6 +268,10 @@ class strint(object):
             self.parser.print_usage()
 
     def set_options(self):
+        if self.arg.obf:
+            self.arg.ignore_comments = True
+            self.arg.remove_blanks = True
+            self.arg.rand_if = True
         if self.arg._exec:
             self.arg.encode = False
 
