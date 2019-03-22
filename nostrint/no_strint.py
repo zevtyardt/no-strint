@@ -8,6 +8,7 @@ main program
 """
 
 # <-- modules -->
+from utils import utils
 from tokenize import *
 from template import *
 from random import choice as C, randrange as R
@@ -15,16 +16,11 @@ from math import ceil, log
 from redat import *
 import command_line
 import sys
-import string
 import re
 import token
 
 # <-- settings -->
 sys.setrecursionlimit(999999999)
-
-# <-- data -->
-INTER = [ '{ }', '[ ]', '( )' ]
-OPER = [ '>', '<', '>=', '<=', '!=', '==' ]
 
 # <-- encoding -->
 def encode(string_):
@@ -32,43 +28,6 @@ def encode(string_):
     return (lambda f, s: f(list( ord(c) for c in str(string_) ) , \
             s))(lambda f, s: sum(f[i] * 256 ** i for i in \
             range(len(f))), str(string_))
-
-# <-- zero_seven -->
-class utils:
-    def sep(self, x):
-        """separating every line"""
-        print ('----- {0:-<35}'.format((x + ' ').upper()))
-
-    def savefile(self, x, o):
-        """Save Result into the file"""
-        self.sep('save')
-        with open(o, 'w') as f:
-            f.write(x)
-        sys.exit('all done (%s bytes).. saved as %s' % (len(x), o))
-
-    def fixing(self, x):
-        """Remove spacebar and fix syntax"""
-        x = x.replace(' ', '') # remove space
-        for spec in ['if', 'else', 'for', 'in']:
-            x = x.replace(spec, ' {} '.format(spec))
-        x = x.replace('lambda_', 'lambda _')
-        x = x.replace('jo in ', 'join')
-        return x
-
-    # <-- randomize -->
-    def _random_str(self, lenght=10):
-        """Create random text"""
-        return '"{}"'.format(
-            ''.join([C(string.ascii_letters) for _ in range(lenght)])
-        )
-
-    def rand_if(self, space_lenght=0):
-       """Create a randomized stat if"""
-       space = ''
-       if space != 0:
-           space = ' ' * space_lenght
-       return '{0}if {1} {2} {3} : {4}'.format(space, R(1, 100), C(OPER),
-           R(1, 100), self._random_str(R(1, 20)))
 
 # <-- simple obfuscator -->
 class obfuscator(object):
@@ -139,42 +98,69 @@ class obfuscator(object):
 
     # <-- shortcut -->
     def zero_base(self, x):
-        return C(ZERO_BASE).format(self.convert(0), self.en_words(x))
+        if x != '':
+            template = C(ZERO_BASE)
+        else:
+            template = C(NULL_STR)
+        return template.format(self.convert(0), self.en_words(x))
 
     def encode_base(self, x):
         return C(ENCODE_BASE).format(self.convert(256), self.convert(0), self.convert(encode(x)))
+
+    def _space(self, x):
+        _t = 0
+        while x[_t].isspace():
+            _t += 1
+        return _t
 
     # <-- rebuild script -->
     def clear_text(self, file):
         f = open(file).read()
         for i in re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
             f = f.replace(i, repr(i)[3:-3])
+        if self.arg.ignore_comments:
+            f = re.sub('#.*?\n', '', f)
         return f.splitlines()
 
     def generate_new_script(self):
+        prev = ''
         if self.arg.debug:
             self.utils.sep('remake script')
             print('filename -> {}'.format(self.arg.infile))
         f = self.clear_text(self.arg.infile)
         for num, i in enumerate(f):
-            if i not in ('\n', ""):
-                if self.arg.rand_if:
-                    if C([True, False]):
-                        if i[-1] not in ('(', ',', ':', '\\'):
-                            jm = 0
-                            while i[jm].isspace():
-                                jm += 1
-                            if_stat = self.utils.rand_if(jm)
-                            if self.arg.debug:
-                                self.utils.sep('added')
-                                print('{} -> line {}'.format(if_stat[if_stat.index('if'):], num + 1))
-                            f.insert(num + 1, if_stat)
-            else:
+            if i in ('\n', ""):
                 if self.arg.remove_blanks:
                     if self.arg.debug:
                         self.utils.sep('remove')
                         print('blank lines ({})'.format(num))
                     del f[num]
+            else:
+                if self.arg.rand_if:
+                    if C([True, False]):
+                        if i[-1] not in EXTH:
+                            if num + 1 < len(f):
+                                if len(f[num + 1]) > 0:
+                                    if f[num + 1][0] in EXCH or 'else' in f[num + 1]:
+                                        continue
+                            jm = self._space(i)
+                            if f[num - 1][-1] in EXTH:
+                                if self._space(f[num - 1]) != jm:
+                                    continue
+                                if i[-1] in EXCH:
+                                    continue
+                            if_stat = self.utils.rand_if(jm)
+                            if prev == i or prev == f[num - 1]:
+                                if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
+                            if self.arg.debug:
+                                self.utils.sep('added')
+                                print('{} -> line {}'.format(if_stat[jm:], num + 1))
+                            # <-- update -->
+                            prev = i
+                            indx = 1
+                            if 'return' in i:
+                                indx = 0
+                            f.insert(num + indx, if_stat)
         return '\n'.join(f)
 
     def rebuild(self):
@@ -185,9 +171,6 @@ class obfuscator(object):
         res = [] # list
         for i in generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
-            if self.arg.ignore_comments:
-                if token.tok_name[i[0]] == 'COMMENT':
-                    continue
             if token.tok_name[i[0]] in ('NUMBER', 'STRING'):
                 if self.arg.debug or self.arg.verbose:
                     self.utils.sep('original strint')

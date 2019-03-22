@@ -6,3 +6,8 @@ BANNER = '''    _
    |||  (https://github.com/zevtyardt)
 '''.format(__version__)
 
+# <-- data -->
+INTER = [ '{ }', '[ ]', '( )' ]
+OPER = [ '>', '<', '>=', '<=', '!=', '==' ]
+EXTH = ['{', '[', '(', ',', ':', '\\']
+EXCH =  [')', '}', ']']

@@ -19,3 +19,7 @@ STDOUT_BASE = ['getattr ( __import__ ( True . __class__ . __name__ [ {0} ] + [ ]
 # {1} -> 'exec'       {4} -> strint
 # {2} -> 1            {5} -> 0
 EXEC_BASE = ['( lambda __ : [ ( eval ( compile ( _ , {0} , {1} ) , None , __ ) , None ) [ {2} ] for __ [ chr ( {3} ) ] in [ ( {4} ) ] ] [ {5} ] ) ( globals ( ) )']
+
+# ''
+NULL_STR = ['( ( lambda : {0} ) . func_code . co_lnotab )',
+            'str ( )']
