@@ -3,7 +3,7 @@ import random
 a = 0
 b = 1.2
 c = 'abc..'
-d = r'can\'t'
+d = 'can\'t'
 u7 = 8 # variable with int
 
 if c[0] == random.choice(['a', 'b']):
@@ -18,3 +18,9 @@ print '\x1b[32mwith \033[34mcolor\033[0m'
 print '\twith tab'
 
 print "u7"
+
+def retrn(n=7282829):
+    return n
+
+
+print retrn()
