@@ -8,21 +8,21 @@ main program
 """
 
 # <-- modules -->
-from utils import utils
+from utils import utils as _utils
+from random import choice as _choice
+from math import ceil as _ceil, log as _log
+import command_line as _command_line
+from redat import *
 from tokenize import *
 from template import *
-from random import choice as C, randrange as R
-from math import ceil, log
-from redat import *
-import command_line
-import sys
-import re
-import token
+import sys as _sys
+import re as _re
+import token as _token
 
 # <-- settings -->
-reload(sys)
-sys.setdefaultencoding('utf8')
-sys.setrecursionlimit(999999999)
+reload(_sys)
+_sys.setdefaultencoding('utf8')
+_sys.setrecursionlimit(999999999)
 
 # <-- encoding -->
 def encode(string_):
@@ -33,15 +33,15 @@ def encode(string_):
 
 # <-- simple obfuscator -->
 class obfuscator(object):
-    def __init__(self, arg, utils, ens):
+    def __init__(self, arg, _utils, ens):
         self.arg = arg
-        self.utils = utils
+        self._utils = _utils
         self.en_words = ens
 
     def sub_obfus(self, num):
         res = []
         if self.arg.debug:
-            self.utils.sep('obfuscate number')
+            self._utils.sep('obfuscate number')
         s = [num]
         if num > 3:
             s = [ num / 2 ] * 2
@@ -52,7 +52,7 @@ class obfuscator(object):
         for i in range(len(s)):
             while True:
                 ex = ' '.join(['( {0} {1} {2} ) {3}'.format(
-                    C(INTER), C(OPER), C(INTER), C(['-', '+', '*']))
+                    _choice(INTER), _choice(OPER), _choice(INTER), _choice(['-', '+', '*']))
                     for _ in range(int(s[i]) if int(s[i]) not in (0, 1) else 2)]
                 )[:-2]
                 if eval(ex) == int(s[i]):
@@ -78,7 +78,7 @@ class obfuscator(object):
         while num:
             base = shift = 0
             diff = num
-            span = int(ceil(log(abs(num), 1.5))) + (16 >> depth)
+            span = int(_ceil(_log(abs(num), 1.5))) + (16 >> depth)
             for test_base in range(span):
                 for test_shift in range(span):
                     test_diff = abs(num) - (test_base << test_shift)
@@ -101,13 +101,13 @@ class obfuscator(object):
     # <-- shortcut -->
     def zero_base(self, x):
         if x != '':
-            template = C(ZERO_BASE)
+            template = _choice(ZERO_BASE)
         else:
-            template = C(NULL_STR)
+            template = _choice(NULL_STR)
         return template.format(self.convert(0), self.en_words(x))
 
     def encode_base(self, x):
-        return C(ENCODE_BASE).format(self.convert(256), self.convert(0), self.convert(encode(x)))
+        return _choice(ENCODE_BASE).format(self.convert(256), self.convert(0), self.convert(encode(x)))
 
     def _space(self, x):
         _t = 0
@@ -118,24 +118,24 @@ class obfuscator(object):
     # <-- rebuild script -->
     def clear_text(self, file):
         f = open(file).read()
-        for i in re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
+        for i in _re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
             f = f.replace(i, repr(i)[3:-3])
         if self.arg.ignore_comments:
-            f = re.sub('#.*?\n', '', f)
+            f = _re.sub('#.*?\n', '', f)
         if self.arg.remove_blanks:
-            f = re.sub('\n\n', '\n', f)
+            f = _re.sub('\n\n', '\n', f)
         return f.splitlines()
 
     def generate_new_script(self):
         prev = ''
         if self.arg.debug:
-            self.utils.sep('remake script')
+            self._utils.sep('remake script')
             print('filename -> {}'.format(self.arg.infile))
         f = self.clear_text(self.arg.infile)
         for num, i in enumerate(f):
             if i not in ('\n', ""):
                 if self.arg.rand_if:
-                    if C([True, False]):
+                    if _choice([True, False]):
                         if i[-1] not in EXTH:
                             if num + 1 < len(f):
                                 if len(f[num + 1]) > 0:
@@ -148,11 +148,11 @@ class obfuscator(object):
                                         continue
                                     if i[-1] in EXCH:
                                         continue
-                            if_stat = self.utils.rand_if(jm)
+                            if_stat = self._utils.rand_if(jm)
                             if prev == i or prev == f[num - 1]:
                                 if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
                             if self.arg.debug:
-                                self.utils.sep('added')
+                                self._utils.sep('added')
                                 print('{} -> line {}'.format(if_stat[jm:], num + 1))
                             # <-- update -->
                             prev = i
@@ -170,11 +170,11 @@ class obfuscator(object):
         res = [] # list
         for i in generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
-            if token.tok_name[i[0]] in ('NUMBER', 'STRING'):
+            if _token.tok_name[i[0]] in ('NUMBER', 'STRING'):
                 if self.arg.debug or self.arg.verbose:
-                    self.utils.sep('original strint')
+                    self._utils.sep('original strint')
                     print(i[1])
-            if token.tok_name[i[0]] == 'STRING':
+            if _token.tok_name[i[0]] == 'STRING':
                 new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1]
                 if i[1][0] in ('\'', '"'):
                     new = new.decode('string_escape')
@@ -182,16 +182,16 @@ class obfuscator(object):
                     i[1] = self.encode_base(new)
                 else:
                     i[1] = self.zero_base(new)
-            elif token.tok_name[i[0]] == 'NUMBER':
+            elif _token.tok_name[i[0]] == 'NUMBER':
                 if '.' in i[1]:
                     i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
                 else:
                     i[1] = self.convert(int(i[1]))
-            if token.tok_name[i[0]] in ('NUMBER', 'STRING'):
+            if _token.tok_name[i[0]] in ('NUMBER', 'STRING'):
                 if not self.arg.with_space:
-                    i[1] = self.utils.fixing(i[1])
+                    i[1] = self._utils.fixing(i[1])
                 if self.arg.debug or self.arg.verbose:
-                    self.utils.sep('temp')
+                    self._utils.sep('temp')
                     print(i[1])
             res.append(tuple(i))
         return untokenize(res)
@@ -199,10 +199,10 @@ class obfuscator(object):
 # <-- base -->
 class strint(object):
     def __init__(self):
-        self.parser = command_line.CLI()
+        self.parser = _command_line.CLI()
         self.arg = self.parser.parse_args()
-        self.utils = utils()
-        self.obfuscator = obfuscator(self.arg, self.utils, self.en_words)
+        self._utils = _utils()
+        self.obfuscator = obfuscator(self.arg, self._utils, self.en_words)
         self.set_options()
         self.begin()
 
@@ -213,16 +213,16 @@ class strint(object):
                     compile(open(self.arg.infile).read(), '<string>', 'exec') # cek source code
                     _fin = self.obfuscator.rebuild()
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
-                        self.utils.sep('result')
+                        self._utils.sep('result')
                     print(_fin)
                     if self.arg.outfile:
-                        self.utils.savefile(_fin, self.arg.outfile)
+                        self._utils.savefile(_fin, self.arg.outfile)
                 else:
                     self.parser.error('argument --infile is required')
             else:
                 _text = self.re_text()
                 if self.arg.verbose or self.arg.debug or self.arg._eval:
-                    self.utils.sep('original strint')
+                    self._utils.sep('original strint')
                     print(_text)
                 _text = _text.decode('string_escape')
                 if not _text.isdigit():
@@ -232,22 +232,22 @@ class strint(object):
                         _fin = self.obfuscator.zero_base(_text)
                     # <-- next -->
                     if self.arg.stdout:
-                        _fin = C(STDOUT_BASE).format(self.obfuscator.convert(1), self.obfuscator.convert(2), self.obfuscator.convert(5), self.obfuscator.convert(8), _fin)
+                        _fin = _choice(STDOUT_BASE).format(self.obfuscator.convert(1), self.obfuscator.convert(2), self.obfuscator.convert(5), self.obfuscator.convert(8), _fin)
                     elif self.arg._exec:
-                        _fin = C(EXEC_BASE).format(self.obfuscator.zero_base('<string>'), self.obfuscator.zero_base('exec'), self.obfuscator.convert(1), self.obfuscator.convert(95), self.obfuscator.zero_base(_text), self.obfuscator.convert(0))
+                        _fin = _choice(EXEC_BASE).format(self.obfuscator.zero_base('<string>'), self.obfuscator.zero_base('exec'), self.obfuscator.convert(1), self.obfuscator.convert(95), self.obfuscator.zero_base(_text), self.obfuscator.convert(0))
                 # <-- NOT -->
                 else:
                     _fin = self.obfuscator.convert(int(_text))
                 if self.arg.debug or self.arg._eval or self.arg.verbose:
-                    self.utils.sep('result')
+                    self._utils.sep('result')
                 if not self.arg.with_space:
-                    _fin = self.utils.fixing(_fin)
+                    _fin = self._utils.fixing(_fin)
                 print(_fin)
                 if self.arg._eval:
-                    self.utils.sep('eval')
+                    self._utils.sep('eval')
                     print(eval(_fin))
                 if self.arg.outfile:
-                    self.utils.savefile(_fin, self.arg.outfile)
+                    self._utils.savefile(_fin, self.arg.outfile)
         else:
             print (BANNER)
             self.parser.print_usage()
