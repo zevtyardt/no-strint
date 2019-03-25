@@ -13,11 +13,10 @@ from random import choice as _choice
 from math import ceil as _ceil, log as _log
 import command_line as _command_line
 from redat import *
-from tokenize import *
+import tokenize as _tokenize
 from template import *
 import sys as _sys
 import re as _re
-import token as _token
 
 # <-- settings -->
 reload(_sys)
@@ -168,13 +167,14 @@ class obfuscator(object):
         else:
             f = open(self.arg.infile).read()
         res = [] # list
-        for i in generate_tokens(iter(f.splitlines(1)).next):
+        for i in _tokenize.generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
-            if _token.tok_name[i[0]] in ('NUMBER', 'STRING'):
+            ifer =  i[0] in (_tokenize.NUMBER, _tokenize.STRING)
+            if ifer:
                 if self.arg.debug or self.arg.verbose:
                     self._utils.sep('original strint')
                     print(i[1])
-            if _token.tok_name[i[0]] == 'STRING':
+            if i[0] == _tokenize.STRING:
                 new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1]
                 if i[1][0] in ('\'', '"'):
                     new = new.decode('string_escape')
@@ -182,19 +182,19 @@ class obfuscator(object):
                     i[1] = self.encode_base(new)
                 else:
                     i[1] = self.zero_base(new)
-            elif _token.tok_name[i[0]] == 'NUMBER':
+            elif i[0] == _tokenize.NUMBER:
                 if '.' in i[1]:
                     i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
                 else:
                     i[1] = self.convert(int(i[1]))
-            if _token.tok_name[i[0]] in ('NUMBER', 'STRING'):
+            if ifer:
                 if not self.arg.with_space:
                     i[1] = self._utils.fixing(i[1])
                 if self.arg.debug or self.arg.verbose:
                     self._utils.sep('temp')
                     print(i[1])
             res.append(tuple(i))
-        return untokenize(res)
+        return _tokenize.untokenize(res)
 
 # <-- base -->
 class strint(object):
