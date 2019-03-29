@@ -3,7 +3,7 @@
 # {0} -> 0
 # {1} -> strint
 ZERO_BASE = ['( ( lambda : {0} ) . func_code . co_lnotab ) . join ( map ( chr , [ {1} ] ) )',
-             '(lambda _:_ ( map ( chr , [ {1} ] ) ) ) ( ( ( lambda : {0} ) . func_code . co_lnotab ) . join )',
+             '( lambda _ : _ ( map ( chr , [ {1} ] ) ) ) ( ( ( lambda : {0} ) . func_code . co_lnotab ) . join )',
              'str ( bytearray ( ( {1} , ) ) )']
 # {0} -> 256
 # {1} -> 0
