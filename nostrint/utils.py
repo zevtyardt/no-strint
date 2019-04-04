@@ -62,11 +62,9 @@ class utils:
            space = ' ' * space_lenght
        # <-- generate -->
        num_one = R(1, 100)
-       num_two = R(1, 100)
        if C([True, False]):
            expr = self._random_str(R(1, 20))
        else:
            expr = '{0} {1} {2}'.format(R(1, 100), C(OPER), R(1, 100))
        # <-- done -->
-       return '{0}if {1} {2} {3} : {4}'.format(space, num_one, C(OPER),
-           num_two, expr)
+       return '{0}if {1} - {1} : {2}'.format(space, num_one, expr)
