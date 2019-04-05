@@ -104,7 +104,6 @@ class obfuscator(object):
         if self.arg.indent:
             r = reindenter(file, self.arg.indent)
             f = ''.join(r.run())
-        print f
         for i in _re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
             f = f.replace(i, repr(i)[3:-3])
         if self.arg.ignore_comments:
