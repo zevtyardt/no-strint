@@ -101,9 +101,6 @@ class obfuscator(object):
 
     def clear_text(self, file):
         f = open(file).read()
-        if self.arg.indent:
-            r = reindenter(file, self.arg.indent)
-            f = ''.join(r.run())
         for i in _re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
             f = f.replace(i, repr(i)[3:-3])
         if self.arg.ignore_comments:
@@ -139,10 +136,6 @@ class obfuscator(object):
                                     if i[-1] in EXCH:
                                         continue
                             if_stat = self._utils.rand_if(jm)
-                            if not self.arg.with_space:
-                                if_stat = if_stat[jm + 3:].replace(' ', "")
-                                if_stat = '{}if {}'.format(
-                                    ' ' * jm, if_stat)
                             if i in [PREVIOUS, f[num - 1]]:
                                 if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
                             if self.arg.debug:
@@ -153,6 +146,10 @@ class obfuscator(object):
                             if 'return' in i or 'yield' in i:
                                 _INDEX = 0
                             f.insert(num + _INDEX, if_stat)
+        f = '\n'.join(f).splitlines()
+        if self.arg.indent:
+            r = reindenter(f, self.arg.indent)
+            return ''.join(r.run())
         return '\n'.join(f)
 
     def rebuild(self):

@@ -32,6 +32,8 @@ class strint(object):
     def __init__(self):
         self.parser = _command_line.CLI()
         self.arg = self.parser.parse_args()
+        if self.arg.indent < 1 and type(self.arg.indent) is int:
+            self.parser.error('indentation < 1')
         self._utils = _utils()
         self.obfuscator = _obf(self.arg, self._utils, self.en_words)
         self.set_options()
@@ -42,9 +44,6 @@ class strint(object):
         compile(open(self.arg.infile).read(), '<string>', 'exec')
 
     def begin(self):
-        if self.arg.indent:
-            if self.arg.indent < 1:
-                self.parser('indentation < 1')
         if self.arg.txt or self.arg.infile:
             if self.arg.only_strint:
                 if self.arg.infile:
@@ -107,7 +106,8 @@ class strint(object):
             self.arg.ignore_comments = True
             self.arg.remove_blanks = True
             self.arg.rand_if = True
-            self.arg.indent = 1
+            if not self.arg.indent:
+                self.arg.indent = 1
         if self.arg._exec:
             self.arg.encode = False
 

@@ -18,8 +18,8 @@ class reindenter:
         self.find_stmt = 1
         self.level = 0
         self.new_indent = indent
-        self.raw = open(f).readlines()
-        self.lines = [_rstrip(line).expandtabs() + "\n"
+        self.raw = f
+        self.lines = [_rstrip(line).expandtabs() + '\n'
                       for line in self.raw]
         self.lines.insert(0, None)
         self.index = 1
