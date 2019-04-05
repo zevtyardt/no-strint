@@ -2,6 +2,7 @@ from random import choice as _choice
 from math import ceil as _ceil, log as _log
 from template import *
 from redat import *
+from reindent import reindenter
 import tokenize as _tokenize
 import re as _re
 
@@ -100,6 +101,10 @@ class obfuscator(object):
 
     def clear_text(self, file):
         f = open(file).read()
+        if self.arg.indent:
+            r = reindenter(file, self.arg.indent)
+            f = ''.join(r.run())
+        print f
         for i in _re.findall(r'(?si)(["\']{3}.*?["\']{3})', f):
             f = f.replace(i, repr(i)[3:-3])
         if self.arg.ignore_comments:

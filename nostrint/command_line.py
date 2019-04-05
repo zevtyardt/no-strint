@@ -8,11 +8,11 @@ def CLI():
              formatter_class=_argparse.RawTextHelpFormatter,
              version=__version__)
 
-    _parser.add_argument('txt', metavar='str | int', nargs='*', help='strings or integers')
-    _parser.add_argument('--infile', metavar='file', help='specify the file name to process')
-    _parser.add_argument('--outfile', metavar='file', help='save the results as a file')
+    _parser.add_argument('txt', metavar='STR | INT', nargs='*', help='strings or integers')
+    _parser.add_argument('--infile', metavar='FILE', help='specify the file name to process')
+    _parser.add_argument('--outfile', metavar='FILE', help='save the results as a file')
     _parser.add_argument('--with-space', action='store_true', help='generate output strings with spaces')
-    _parser.add_argument('--obf', action='store_true', help='same as --rand-if, --remove-blanks,\n--ignore-comments and --only-strint\n...')
+    _parser.add_argument('--obf', action='store_true', help='same as --rand-if, --remove-blanks,\n--ignore-comments, --indent and --only-strint\n* default indentation is 1...')
     _parser.add_argument('--only-strint', action='store_true', help='just obfuscate strings and integers')
     _parser.add_argument('--encode', action='store_true', help='convert string to integer before obfuscate')
     _parser.add_argument('--stdout', action='store_true', help='add print function to output (string only)')
@@ -20,6 +20,7 @@ def CLI():
 
     _obfuscate = _parser.add_argument_group('additional', description='if the --only-string option is called')
     _obfuscate.add_argument('--rand-if', action='store_true', help='add a random if statement to the source code')
+    _obfuscate.add_argument('--indent', help='Indentation to use', type=int)
     _obfuscate.add_argument('--remove-blanks', action='store_true', help='remove blank lines, instead of obfuscate')
     _obfuscate.add_argument('--ignore-comments', action='store_true', help='remove first block of comments as well')
 

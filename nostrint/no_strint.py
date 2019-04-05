@@ -42,6 +42,9 @@ class strint(object):
         compile(open(self.arg.infile).read(), '<string>', 'exec')
 
     def begin(self):
+        if self.arg.indent:
+            if self.arg.indent < 1:
+                self.parser('indentation < 1')
         if self.arg.txt or self.arg.infile:
             if self.arg.only_strint:
                 if self.arg.infile:
@@ -104,6 +107,7 @@ class strint(object):
             self.arg.ignore_comments = True
             self.arg.remove_blanks = True
             self.arg.rand_if = True
+            self.arg.indent = 1
         if self.arg._exec:
             self.arg.encode = False
 
