@@ -34,7 +34,7 @@ class strint(object):
         self.parser = _command_line.CLI()
         self.arg = self.parser.parse_args()
         if self.arg.indent < 1 and type(self.arg.indent) is int:
-            _sys.exit('argument indent: indentation < 1')
+            raise ValueError('indentation < 1')
         self._utils = _utils()
         self.obfuscator = _obf(self.arg, self._utils, self.en_words)
         self.set_options()
