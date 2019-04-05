@@ -12,7 +12,7 @@ python source code obfuscator. only obscures strings and integers
 >> Issues
    > https://github.com/zevtyardt/no-strint/issues
 
->> Hasic usage
+>> Basic usage
    $ strint <str> or <int>
    $ strint --obf <filename> 
    $ strint --help
