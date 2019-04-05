@@ -15,6 +15,7 @@ import command_line as _command_line
 from redat import *
 from template import *
 import sys as _sys
+import os as _os
 
 # <-- settings -->
 reload(_sys)
@@ -33,7 +34,7 @@ class strint(object):
         self.parser = _command_line.CLI()
         self.arg = self.parser.parse_args()
         if self.arg.indent < 1 and type(self.arg.indent) is int:
-            self.parser.error('indentation < 1')
+            _sys.exit('argument indent: indentation < 1')
         self._utils = _utils()
         self.obfuscator = _obf(self.arg, self._utils, self.en_words)
         self.set_options()
@@ -47,6 +48,8 @@ class strint(object):
         if self.arg.txt or self.arg.infile:
             if self.arg.only_strint:
                 if self.arg.infile:
+                    if not _os.path.isfile(self.arg.infile):
+                        _sys.exit("IOError: [Errno 2] No such file or directory: '%s'" % self.arg.infile)
                     self.check_syntax()  # damnit
                     _fin = self.obfuscator.rebuild()
                     if self.arg.debug or self.arg._eval or self.arg.verbose:

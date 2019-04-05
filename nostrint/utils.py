@@ -57,17 +57,20 @@ class utils:
 
     def rand_if(self, space_lenght=0):
        """Create a randomized stat if"""
-       space = ''
-       if space != 0:
-           space = ' ' * space_lenght
+       space, if_st = ' ' * space_lenght, ""
        # <-- generate -->
-       num_one = R(1, 100)
-       expr = []
-       for _ in range(R(1, 3)):
-           if C([True, False]):
-               expr.append(self._random_str(R(1, 20)))
-           else:
-               expr.append('{0}{1}{2}'.format(R(1, 100), C(OPER), R(1, 100)))
+       def gen_fake_stdout():
+           expr = []
+           for _ in range(R(1, 3)):
+               if C([True, False]):
+                   expr.append(self._random_str(R(1, 20)))
+               else:
+                   expr.append('{0}{1}{2}'.format(R(1, 100), C(OPER), R(1, 100)))
+           return '\n{0}    print '.format(space).join(expr)
+
+       for i in range(R(1, 3)):
+           if_st += '{0}if {1}-{1}:\n{0}    print {2}\n'.format(
+               space, R(1, 100), gen_fake_stdout())
+           space = space + (' ' * 4)
        # <-- done -->
-       return '{0}if {1}-{1}:\n{0}    {2}'.format(space, num_one, 
-           ('\n{0}    '.format(space)).join(expr))
+       return if_st[:-1]

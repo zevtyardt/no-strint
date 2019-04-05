@@ -154,6 +154,14 @@ class obfuscator(object):
         return '\n'.join(f)
 
     def rebuild(self):
+        def gen_alias_bool(TF):
+            while True:
+                x = '( {0} {1} {2} )'.format(_choice(INTER), _choice(OPER), _choice(INTER))
+                if str(eval(x)) == TF:
+                    if not self.arg.with_space:
+                        x = _re.sub(r' ', '', x)
+                    return x
+
         if self.arg.rand_if or self.arg.remove_blanks:
             f = self.generate_new_script()
         else:
@@ -167,8 +175,8 @@ class obfuscator(object):
                     self._utils.sep('original strint')
                     print(i[1])
             if i[0] == _tokenize.STRING:
-                new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1]
-                if i[1][0] in ('\'', '"'):
+                new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1].replace('\u00', '\\x')
+                if i[1][0] != 'r':
                     new = new.decode('string_escape')
                 if self.arg.encode:
                     i[1] = self.encode_base(new)
@@ -179,6 +187,8 @@ class obfuscator(object):
                     i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
                 else:
                     i[1] = self.convert(int(i[1]))
+            elif i[0] == _tokenize.NAME and i[1] in ('True', 'False'):
+                i[1] = gen_alias_bool(i[1])
             if ifer:
                 if not self.arg.with_space:
                     i[1] = self._utils.fixing(i[1])
