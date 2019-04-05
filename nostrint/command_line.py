@@ -3,10 +3,15 @@ import argparse as _argparse
 import sys as _sys
 
 def CLI():
-    _parser = _argparse.ArgumentParser(usage="%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n      {0}  [--infile <file> (--obf|--only-strint)]\n      {0}  [--outfile <file>] [--with-space] or/and\n      {0}  [--eval or (--debug|--verbose)]".format(" " * len(_sys.argv[0].split('/')[-1])),
-             description='simple str & int obfuscator (c) zvtyrdt.id',
-             formatter_class=_argparse.RawTextHelpFormatter,
-             version=__version__)
+    _parser = _argparse.ArgumentParser(
+        usage="%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n\
+      {0}  [--infile <file> (--obf|--only-strint)]\n\
+      {0}  [--outfile <file>] [--with-space] or/and\n\
+      {0}  [--eval or (--debug|--verbose)]".format(
+            " " * len(_sys.argv[0].split('/')[-1])),
+        description='simple str & int obfuscator (c) zvtyrdt.id',
+        formatter_class=_argparse.RawTextHelpFormatter,
+        version=__version__)
 
     _parser.add_argument('txt', metavar='STR | INT', nargs='*', help='strings or integers')
     _parser.add_argument('--infile', metavar='FILE', help='specify the file name to process')

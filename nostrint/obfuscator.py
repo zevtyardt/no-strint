@@ -94,7 +94,8 @@ class obfuscator(object):
     def _remove_comments(self, f):
         fm = []
         for _ in f.splitlines():
-            if not _re.search(r'["\']', _):
+            if not _re.search(r'["\']', _) and \
+              not _re.search(r'#!usr|#.*?encoding', _):
                 _ = _re.sub(r'(#.*?(?:\n|$))', '', _)
             fm.append(_)
         return '\n'.join(fm)
