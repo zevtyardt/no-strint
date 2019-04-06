@@ -1,5 +1,6 @@
 # update -> 1.4.9 next
 * remove True False
+* serialization of object data after being obscured
 
 # update -> 1.4.9
 * add some extra blurring. such as deleting blank lines, deleting comments,
