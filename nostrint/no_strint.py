@@ -22,13 +22,6 @@ reload(_sys)
 _sys.setdefaultencoding('utf-8')
 _sys.setrecursionlimit(999999999)
 
-# <-- encoding -->
-def encode(string_):
-    """Change String to Integers"""
-    return (lambda f, s: f(list( ord(c) for c in str(string_) ) , \
-            s))(lambda f, s: sum(f[i] * 256 ** i for i in \
-            range(len(f))), str(string_))
-
 class strint(object):
     def __init__(self):
         self.parser = _command_line.CLI()

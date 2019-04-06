@@ -6,12 +6,18 @@ from reindent import reindenter
 import tokenize as _tokenize
 import re as _re
 
+def encode(string):
+    return (lambda f, s: f(list(ord(c) for c in string) , \
+            s))(lambda f, s: sum(f[i]*256**i for i in \
+            xrange(len(f))),string)
+
 # <-- simple obfuscator -->
 class obfuscator(object):
     def __init__(self, arg, _utils, ens):
         self.arg = arg
         self._utils = _utils
         self.en_words = ens
+        self.bogus_name = {}
 
     def sub_obfus(self, num):
         res = []
@@ -137,6 +143,9 @@ class obfuscator(object):
                                     if i[-1] in EXCH:
                                         continue
                             if_stat = self._utils.rand_if(jm)
+                            if not self.arg.with_space:
+                                for i in OPER + ['-', ':']:
+                                    if_stat = if_stat.replace(' {} '.format(i), i)
                             if i in [PREVIOUS, f[num - 1]]:
                                 if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
                             if self.arg.debug:
@@ -169,26 +178,31 @@ class obfuscator(object):
         res = [] # list
         for i in _tokenize.generate_tokens(iter(f.splitlines(1)).next):
             i = list(i)
+            old_strint = i[1]
             ifer = i[0] in (_tokenize.NUMBER, _tokenize.STRING)
             if ifer:
                 if self.arg.debug or self.arg.verbose:
                     self._utils.sep('original strint')
                     print(i[1])
-            if i[0] == _tokenize.STRING:
-                new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1].replace('\u00', '\\x')
-                if i[1][0] != 'r':
-                    new = new.decode('string_escape')
-                if self.arg.encode:
-                    i[1] = self.encode_base(new)
-                else:
-                    i[1] = self.zero_base(new)
-            elif i[0] == _tokenize.NUMBER:
-                if '.' in i[1]:
-                    i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
-                else:
-                    i[1] = self.convert(int(i[1]))
-            elif i[0] == _tokenize.NAME and i[1] in ('True', 'False'):
-                i[1] = gen_alias_bool(i[1])
+            if old_strint not in self.bogus_name.keys():
+                if i[0] == _tokenize.STRING:
+                    new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1].replace('\u00', '\\x')
+                    if i[1][0] != 'r':
+                        new = new.decode('string_escape')
+                    if self.arg.encode:
+                        i[1] = self.encode_base(new)
+                    else:
+                        i[1] = self.zero_base(new)
+                elif i[0] == _tokenize.NUMBER:
+                    if '.' in i[1]:
+                        i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
+                    else:
+                        i[1] = self.convert(int(i[1]))
+                elif i[0] == _tokenize.NAME and i[1] in ('True', 'False'):
+                    i[1] = gen_alias_bool(i[1])
+                self.bogus_name[old_strint] = i[1]
+            else:
+                i[1] = self.bogus_name[old_strint]
             if ifer:
                 if not self.arg.with_space:
                     i[1] = self._utils.fixing(i[1])
