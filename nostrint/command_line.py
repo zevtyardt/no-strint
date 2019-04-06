@@ -25,6 +25,7 @@ def CLI():
     _obfuscate.add_argument('-c', '--ignore-comments', action='store_true', help='remove first block of comments as well')
 
     _verbosity = _parser.add_argument_group('verbosity / simulation')
+    _verbosity.add_argument('-S', '--serialization', action='store_true', help='serialization of object data after being obscured')
     _verbosity.add_argument('-E', '--eval', action='store_true', dest='_eval', help='try running output (experimental)')
     _verbosity.add_argument('-V', '--verbose', action='store_true', help='verbose (debug)')
     _verbosity.add_argument('-D', '--debug', action='store_true', help='enable debug mode')

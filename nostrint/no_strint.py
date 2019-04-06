@@ -49,6 +49,12 @@ class strint(object):
                         self._utils.sep('result')
                     print(_fin)
                     if self.arg.outfile:
+                        if self.arg.serialization:
+                            if self.arg.debug or self.arg.verbose:
+                                self._utils.sep('serialization')
+                            new_fin = compile(_fin, '<script>', 'exec')
+                            _fin = 'import marshal\nexec(marshal.loads({}))'.format(
+                                repr(marshal.dumps(new_fin)))
                         self._utils.savefile(_fin, self.arg.outfile)
                 else:
                     self.parser.error('argument --infile is required')
