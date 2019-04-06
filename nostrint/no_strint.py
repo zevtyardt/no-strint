@@ -16,6 +16,7 @@ from redat import *
 from template import *
 import sys as _sys
 import os as _os
+import marshal as _marshal
 
 # <-- settings -->
 reload(_sys)
@@ -52,9 +53,10 @@ class strint(object):
                         if self.arg.serialization:
                             if self.arg.debug or self.arg.verbose:
                                 self._utils.sep('serialization')
+                                print 'None'
                             new_fin = compile(_fin, '<script>', 'exec')
                             _fin = 'import marshal\nexec(marshal.loads({}))'.format(
-                                repr(marshal.dumps(new_fin)))
+                                repr(_marshal.dumps(new_fin)))
                         self._utils.savefile(_fin, self.arg.outfile)
                 else:
                     self.parser.error('argument --infile is required')
