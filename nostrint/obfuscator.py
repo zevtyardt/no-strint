@@ -146,7 +146,7 @@ class obfuscator(object):
                             if not self.arg.with_space:
                                 for i in OPER + ['-', ':']:
                                     if_stat = if_stat.replace(' {} '.format(i), i)
-                            if i in [PREVIOUS, f[num - 1]]:
+                            if f[num] in [PREVIOUS, f[num - 1]]:
                                 if_stat = '{}el{}'.format(' ' * jm, if_stat[jm:])
                             if self.arg.debug:
                                 self._utils.sep('added')

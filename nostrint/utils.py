@@ -61,16 +61,28 @@ class utils:
        # <-- generate -->
        def gen_fake_stdout():
            expr = []
-           for _ in range(R(1, 4)):
+           for _ in range(R(1, 3)):
                if C([True, False]):
                    expr.append(self._random_str(R(1, 20)))
                else:
                    expr.append('{0} {1} {2}'.format(R(1, 100), C(OPER), R(1, 100)))
            return '\n{0}    print '.format(space).join(expr)
+       def gen_fake_if():
+           if C([True, False]):
+               return self._random_str(5), '!='
+           else:
+               return R(1, 100), '-'
 
+       el = ''
        for i in range(R(1, 4)):
-           if_st += '{0}if {1} - {1} : \n{0}    print {2}\n'.format(
-               space, R(1, 100), gen_fake_stdout())
-           space = space + (' ' * 4)
+           var, OP = gen_fake_if()
+           if_st += '{0}{1}if {2} {3} {2} : \n{0}    print {4}\n'.format(
+               space, el, var, OP, gen_fake_stdout())
+           if C([True, False]):
+               space = space + (' ' * 4)
+               el = ''
+           else:
+               if i != 1:
+                   el = 'el'
        # <-- done -->
        return if_st[:-1]

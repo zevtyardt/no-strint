@@ -4,11 +4,6 @@ import sys as _sys
 
 def CLI():
     _parser = _argparse.ArgumentParser(
-        usage="%(prog)s [-h] [(--stdout|--exec)] (str|int) [...]\n\
-      {0}  [--infile <file> (--obf|--only-strint)]\n\
-      {0}  [--outfile <file>] [--with-space] or/and\n\
-      {0}  [--eval or (--debug|--verbose)]".format(
-            " " * len(_sys.argv[0].split('/')[-1])),
         description='simple str & int obfuscator (c) zvtyrdt.id',
         formatter_class=_argparse.RawTextHelpFormatter,
         version=__version__)
@@ -30,8 +25,8 @@ def CLI():
     _obfuscate.add_argument('-c', '--ignore-comments', action='store_true', help='remove first block of comments as well')
 
     _verbosity = _parser.add_argument_group('verbosity / simulation')
-    _verbosity.add_argument('--eval', action='store_true', dest='_eval', help='try running output (experimental)')
+    _verbosity.add_argument('-E', '--eval', action='store_true', dest='_eval', help='try running output (experimental)')
     _verbosity.add_argument('-V', '--verbose', action='store_true', help='verbose (debug)')
-    _verbosity.add_argument('--debug', action='store_true', help='enable debug mode')
+    _verbosity.add_argument('-D', '--debug', action='store_true', help='enable debug mode')
 
     return _parser
