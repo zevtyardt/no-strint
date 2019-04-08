@@ -36,7 +36,7 @@ class utils:
         """Save Result into the file"""
         self.sep('save')
         with open(o, 'w') as f:
-            f.write('#    _   @ {}\n#   (o)\n#  (_|_) <no strint> {} @ zvtyrdt.id\n#   |||  (https://github.com/zevtyardt)\n\n{}'.format(time.strftime('%c'), __version__, x))
+            f.write('# Obfuscated with no-strint (https://github.com/zevtyardt/no-strint)\n{}'.format(x))
         sys.exit('all done (%s).. saved as %s' % (self.convertSize(len(x) + 124), o))
 
     def fixing(self, x):

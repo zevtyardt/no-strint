@@ -43,7 +43,7 @@ class obfuscator(object):
                 print ('  -> {0}'.format(i))
         return ' + '.join(res)
 
-    # <-- thanks to Ben Kurtovic -->
+    # <-- thanks for Ben Kurtovic -->
     # <-- https://benkurtovic.com/2014/06/01/obfuscating-hello-world.html -->
 
     def obfuscate(self, num, depth):
@@ -101,7 +101,7 @@ class obfuscator(object):
         fm = []
         for _ in f.splitlines():
             if not _re.search(r'["\']', _) and \
-              not _re.search(r'#!usr|#.*?encoding', _):
+              not _re.search(r'(?#!usr|#.*?encoding)', _):
                 _ = _re.sub(r'(#.*?(?:\n|$))', '', _)
             fm.append(_)
         return '\n'.join(fm)
