@@ -14,7 +14,7 @@ $ pip2 install strint
 
 >> Basic usage
 $ strint <str> or <int>
-$ strint --obf <filename> 
+$ strint --obf -i <filename> 
 $ strint --help
 
 >> Help
