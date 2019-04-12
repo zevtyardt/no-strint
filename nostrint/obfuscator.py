@@ -5,6 +5,7 @@ from redat import *
 from reindent import reindenter
 import tokenize as _tokenize
 import re as _re
+from varobf import var_obf
 
 def encode(string):
     return (lambda f, s: f(list(ord(c) for c in string) , \
@@ -175,39 +176,44 @@ class obfuscator(object):
             f = self.generate_new_script()
         else:
             f = open(self.arg.infile).read()
-        res = [] # list
-        for i in _tokenize.generate_tokens(iter(f.splitlines(1)).next):
-            i = list(i)
-            old_strint = i[1]
-            ifer = i[0] in (_tokenize.NUMBER, _tokenize.STRING)
-            if ifer:
-                if self.arg.debug or self.arg.verbose:
-                    self._utils.sep('original strint')
-                    print(i[1])
-            if old_strint not in self.bogus_name.keys():
-                if i[0] == _tokenize.STRING:
-                    new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1].replace('\u00', '\\x')
-                    if i[1][0] != 'r':
-                        new = new.decode('string_escape')
-                    if self.arg.encode:
-                        i[1] = self.encode_base(new)
-                    else:
-                        i[1] = self.zero_base(new)
-                elif i[0] == _tokenize.NUMBER:
-                    if '.' in i[1]:
-                        i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
-                    else:
-                        i[1] = self.convert(int(i[1]))
-                elif i[0] == _tokenize.NAME and i[1] in ('True', 'False'):
-                    i[1] = gen_alias_bool(i[1])
-                self.bogus_name[old_strint] = i[1]
-            else:
-                i[1] = self.bogus_name[old_strint]
-            if ifer:
-                if not self.arg.with_space:
-                    i[1] = self._utils.fixing(i[1])
-                if self.arg.debug or self.arg.verbose:
-                    self._utils.sep('temp')
-                    print(i[1])
-            res.append(tuple(i))
-        return _tokenize.untokenize(res)
+        if self.arg.only_variable:
+            f = var_obf(f).obf_var()
+        if self.arg.only_strint:
+            res = [] # list
+            for i in _tokenize.generate_tokens(iter(f.splitlines(1)).next):
+                i = list(i)
+                old_strint = i[1]
+                ifer = i[0] in (_tokenize.NUMBER, _tokenize.STRING)
+                if ifer:
+                    if self.arg.debug or self.arg.verbose:
+                        self._utils.sep('original strint')
+                        print(i[1])
+                if old_strint not in self.bogus_name.keys():
+                    if i[0] == _tokenize.STRING:
+                        new = i[1][2 if i[1][0] not in ('\'', '"') else 1 : -1].replace('\u00', '\\x')
+                        if i[1][0] != 'r':
+                            new = new.decode('string_escape')
+                        if self.arg.encode:
+                            i[1] = self.encode_base(new)
+                        else:
+                            i[1] = self.zero_base(new)
+                    elif i[0] == _tokenize.NUMBER:
+                        if '.' in i[1]:
+                            i[1] = 'float ( {} )'.format(self.zero_base(i[1]))
+                        else:
+                            i[1] = self.convert(int(i[1]))
+                    elif i[0] == _tokenize.NAME and i[1] in ('True', 'False'):
+                        i[1] = gen_alias_bool(i[1])
+                    self.bogus_name[old_strint] = i[1]
+                else:
+                    i[1] = self.bogus_name[old_strint]
+                if ifer:
+                    if not self.arg.with_space:
+                        i[1] = self._utils.fixing(i[1])
+                    if self.arg.debug or self.arg.verbose:
+                        self._utils.sep('temp')
+                        print(i[1])
+                res.append(tuple(i))
+            return _tokenize.untokenize(res)
+        else:
+            return f

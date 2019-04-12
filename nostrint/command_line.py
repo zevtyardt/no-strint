@@ -12,7 +12,8 @@ def CLI():
     _parser.add_argument('-i', '--infile', metavar='FILE', help='specify the file name to process')
     _parser.add_argument('-o', '--outfile', metavar='FILE', help='save the results as a file')
     _parser.add_argument('-w', '--with-space', action='store_true', help='generate output strings with spaces')
-    _parser.add_argument('--obf', action='store_true', help='same as --rand-if, --remove-blanks,\n--ignore-comments, --indent and --only-strint\n* default indentation is 1...')
+    _parser.add_argument('--obf', action='store_true', help='same as --rand-if, --remove-blanks, --indent\n--ignore-comments, --only-variable  and --only-strint\n* default indentation is 1...')
+    _parser.add_argument('-V', '--only-variable', action='store_true', help='obfuscate all variables in the source code (beta)')
     _parser.add_argument('-O', '--only-strint', action='store_true', help='just obfuscate strings and integers')
     _parser.add_argument('-e', '--encode', action='store_true', help='convert string to integer before obfuscate')
     _parser.add_argument('-s', '--stdout', action='store_true', help='add print function to output (string only)')
@@ -27,7 +28,7 @@ def CLI():
     _verbosity = _parser.add_argument_group('verbosity / simulation')
     _verbosity.add_argument('-S', '--serialization', action='store_true', help='serialization of object data after being obscured')
     _verbosity.add_argument('-E', '--eval', action='store_true', dest='_eval', help='try running output (experimental)')
-    _verbosity.add_argument('-V', '--verbose', action='store_true', help='verbose (debug)')
-    _verbosity.add_argument('-D', '--debug', action='store_true', help='enable debug mode')
+    _verbosity.add_argument('--verbose', action='store_true', help='verbose (debug)')
+    _verbosity.add_argument('--debug', action='store_true', help='enable debug mode')
 
     return _parser

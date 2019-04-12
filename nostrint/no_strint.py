@@ -40,17 +40,17 @@ class strint(object):
 
     def begin(self):
         if self.arg.txt or self.arg.infile:
-            if self.arg.only_strint:
+            if self.arg.only_strint or self.arg.only_variable:
                 if self.arg.infile:
                     if not _os.path.isfile(self.arg.infile):
                         _sys.exit("IOError: [Errno 2] No such file or directory: '%s'" % self.arg.infile)
-                    self.check_syntax()  # damnit
+                    self.check_syntax() # None
                     _fin = self.obfuscator.rebuild()
                     if self.arg.debug or self.arg._eval or self.arg.verbose:
                         self._utils.sep('result')
                     print(_fin)
                     if self.arg.outfile:
-                        if self.arg.serialization:
+                        if self.arg.serialization and not self.arg.only_variable:
                             if self.arg.debug or self.arg.verbose:
                                 self._utils.sep('serialization')
                                 print 'None'
@@ -110,6 +110,7 @@ class strint(object):
             self.arg.ignore_comments = True
             self.arg.remove_blanks = True
             self.arg.rand_if = True
+            self.arg.only_variable = True
             if not self.arg.indent:
                 self.arg.indent = 1
         if self.arg._exec:
